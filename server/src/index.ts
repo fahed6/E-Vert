@@ -20,7 +20,6 @@ app.use("/user", userController.router);
 const PORT = process.env.PORT || 5000;
 
 const userId = "MIpWFCoyuIbYnXUPPzEc7qURIZY2"; 
-
 setAdminRole(userId)
   .then(() => console.log(`✅ Admin role set for user ${userId}`))
   .catch((error) => console.error("❌ Failed to set admin role:", error));
