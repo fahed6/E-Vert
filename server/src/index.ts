@@ -1,31 +1,35 @@
 import cors from "cors";
-import express, { Application } from "express";
+import express from "express";
 import "reflect-metadata";
+import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
-import {User} from "./entities/User"; // Assuming `User` is a TypeORM entity
+import { setAdminRole } from "./middlewares/setAdmin";
 
-const app: Application = express();
 
+
+const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-const PORT: number = 5000;
+// Initialize User Controller
+const userController = new UserController();
+app.use("/user", userController.router);
 
-app.listen(PORT, () => {
-  console.log(`Server started on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+
+const userId = "MIpWFCoyuIbYnXUPPzEc7qURIZY2"; 
+
+setAdminRole(userId)
+  .then(() => console.log(`✅ Admin role set for user ${userId}`))
+  .catch((error) => console.error("❌ Failed to set admin role:", error));
+
 
 AppDataSource.initialize()
-  .then(async () => {
-    console.log("Database connected");
+  .then(() => {
+    console.log("✅ Database connected!");
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
 
-    // Example: Adding a user
-    const user = new User();
-    user.firstName = "John";
-    user.lastName = "Doe";
-    user.isActive = true;
-
-    await AppDataSource.manager.save(user);
-    console.log("User has been saved:", user);
   })
-  .catch((error: Error) => console.error("Database connection error:", error));
+  .catch((error) => console.log("❌ Database connection error:", error));
