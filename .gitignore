@@ -1,3 +1,4 @@
+server/.env
 # Logs
 logs
 *.log
@@ -23,5 +24,6 @@ dist-ssr
 *.sln
 *.sw?
 
-
-../server/.env
+# Ignore .env file in server folder
+server/.env
+client/src/config/firebase-config.ts
