@@ -1,6 +1,8 @@
 import React from 'react';
 import { Flex, Text, TextField, Button, Separator } from '@radix-ui/themes';
 import useAuth from '../hooks/useAuth';
+import "../App.css";
+
 
 const LoginPage: React.FC = () => {
   const {
@@ -13,8 +15,8 @@ const LoginPage: React.FC = () => {
   } = useAuth();
 
   return (
-    <Flex direction="column" gap="4" align="center" justify="center" style={{ height: '100vh' }}>
-      <Text size="6" weight="bold">Welcome back</Text>
+    <Flex direction="column" gap="4" align="center" justify="center" style={{ height: '95vh' }}>
+      <Text size="6" weight="bold">Welcome back !</Text>
 
       <Flex direction="column" gap="3" style={{ width: '300px' }}>
         <TextField.Root
@@ -33,7 +35,7 @@ const LoginPage: React.FC = () => {
       </Flex>
 
       <Text size="2">
-        Don't have an account? <a href="/signup" style={{ color: 'blue' }}>Sign Up</a>
+        Don't have an account? <a href="/signup" className='link'>Sign Up</a>
       </Text>
 
       <Flex align="center" gap="2" style={{ width: '300px' }}>
@@ -41,6 +43,10 @@ const LoginPage: React.FC = () => {
         <Text size="2" color="gray">OR</Text>
         <Separator style={{ flex: 1 }} />
       </Flex>
+
+      <Button variant="outline" onClick={handleGoogleSignIn}>
+        Continue with Google
+      </Button>
 
       <Button variant="outline" onClick={handleGoogleSignIn}>
         Continue with Google

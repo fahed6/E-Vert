@@ -1,6 +1,7 @@
 import React from 'react';
 import { Flex, Text, TextField, Button } from '@radix-ui/themes';
 import useSignup from '../hooks/useSignup';
+import "../App.css";
 
 const SignupPage: React.FC = () => {
   const {
@@ -18,7 +19,7 @@ const SignupPage: React.FC = () => {
   } = useSignup();
 
   return (
-    <Flex direction="column" gap="4" align="center" justify="center" style={{ height: '100vh' }}>
+    <Flex direction="column" gap="4" align="center" justify="center" style={{ height: '80vh' }}>
       <Text size="6" weight="bold">Sign Up</Text>
 
       <Flex direction="column" gap="3" style={{ width: '300px' }}>
@@ -56,7 +57,7 @@ const SignupPage: React.FC = () => {
       </Flex>
 
       <Text size="2">
-        Already have an account? <a href="/login" style={{ color: 'blue' }}>Log In</a>
+        Already have an account? <a href="/login" className="link">Log In</a>
       </Text>
     </Flex>
   );
