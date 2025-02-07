@@ -3,7 +3,7 @@ import express from "express";
 import "reflect-metadata";
 import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
-import { setAdminRole } from "./middlewares/setAdmin";
+import { RoleController } from "./controller/RoleController";
 
 
 
@@ -17,12 +17,12 @@ app.use(express.json());
 const userController = new UserController();
 app.use("/user", userController.router);
 
+// Initialize role Controller
+const roleController = new RoleController();
+app.use("/role", roleController.router);
+
 const PORT = process.env.PORT || 5000;
 
-const userId = "MIpWFCoyuIbYnXUPPzEc7qURIZY2"; 
-setAdminRole(userId)
-  .then(() => console.log(`✅ Admin role set for user ${userId}`))
-  .catch((error) => console.error("❌ Failed to set admin role:", error));
 
 
 AppDataSource.initialize()

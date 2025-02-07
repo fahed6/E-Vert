@@ -27,5 +27,5 @@ export class User {
   isActive!: boolean;
 
   @Column({ type: "varchar", length: 50, default: "user" })
-  role!: "admin" | "user"; 
+  role!: "admin" | "user"| "partner"; 
 }

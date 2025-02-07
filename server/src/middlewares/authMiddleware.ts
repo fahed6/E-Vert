@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import admin from "../config/firebase"; // Ensure this correctly initializes Firebase Admin SDK
+import admin from "../config/firebase";
 
 // Extend Express Request type to include `user`
 declare global {
@@ -50,6 +50,23 @@ class AuthMiddleware {
 
     next(); // Proceed to the next middleware or route handler
   }
+
+
+  // Middleware to check if user is a partner
+  isPartner(req: Request, res: Response, next: NextFunction) {
+    if (!req.user) {
+      res.status(401).json({ error: "Unauthorized - No user found" });
+      return; // Stop further processing
+    }
+
+    if (req.user.role !== "partner") {
+      res.status(403).json({ error: "Forbidden - Admins only" });
+      return; // Stop further processing
+    }
+
+    next(); // Proceed to the next middleware or route handler
+  }
+
 }
 
 export default new AuthMiddleware();

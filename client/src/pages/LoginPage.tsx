@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Text, TextField, Button, Separator } from '@radix-ui/themes';
+import { Flex, Text, TextField, Button, Separator, Link } from '@radix-ui/themes';
 import useAuth from '../hooks/useAuth';
 import "../App.css";
 
@@ -35,7 +35,7 @@ const LoginPage: React.FC = () => {
       </Flex>
 
       <Text size="2">
-        Don't have an account? <a href="/signup" className='link'>Sign Up</a>
+        Don't have an account? <Link href="/signup">Sign Up </Link>
       </Text>
 
       <Flex align="center" gap="2" style={{ width: '300px' }}>

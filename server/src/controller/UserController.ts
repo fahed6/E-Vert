@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { UserService } from '../services/userService';
 import AuthMiddleware from '../middlewares/authMiddleware'; // Import middleware
+import { UserService } from '../services/userService';
 
 export class UserController {
   private userService: UserService;
@@ -14,7 +14,7 @@ export class UserController {
 
   private initializeRoutes() {
     this.router.post('/', this.add.bind(this));
-    this.router.get('/', AuthMiddleware.decodeToken, AuthMiddleware.isAdmin, this.getAll.bind(this)); // 🔒 Admin only
+    this.router.get('/', AuthMiddleware.decodeToken, AuthMiddleware.isAdmin, this.getAll.bind(this)); //  Admin only
     this.router.get('/:id', this.getById.bind(this)); // not Protected
     this.router.put('/:id', this.update.bind(this)); // not Protected
     this.router.patch('/:id', this.deactivate.bind(this)); // not Protected
