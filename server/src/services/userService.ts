@@ -1,10 +1,14 @@
 import { Repository } from "typeorm";
+import admin from "../config/firebase";
 import AppDataSource from "../data-source";
 import { User } from "../entities/User";
-import admin from "../config/firebase"; // Import Firebase Admin SDK
+import { MailService } from "../services/MailService";
 
 export class UserService {
   private userRepository: Repository<User>;
+  private mailService = new MailService();
+
+
 
   constructor() {
     this.userRepository = AppDataSource.getRepository(User);
@@ -13,6 +17,7 @@ export class UserService {
   // Create a new user
   async create(userData: Partial<User>): Promise<User> {
     const user = this.userRepository.create(userData);
+    this.mailService.welcomeMail(user.email,user.firstName);
     return this.userRepository.save(user);
   }
 

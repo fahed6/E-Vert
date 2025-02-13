@@ -1,9 +1,9 @@
 import cors from "cors";
 import express from "express";
 import "reflect-metadata";
+import { RoleController } from "./controller/RoleController";
 import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
-import { RoleController } from "./controller/RoleController";
 
 
 
@@ -22,6 +22,7 @@ const roleController = new RoleController();
 app.use("/role", roleController.router);
 
 const PORT = process.env.PORT || 5000;
+
 
 
 
