@@ -1,83 +1,98 @@
-import { signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth, googleProvider } from '../config/firebase-config';
-
+import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // For popup alerts
+import { apiCall } from "../config/api/apiCall"; // Import API call function
+import { auth, googleProvider } from "../config/firebase-config";
+import{checkUserStatus} from "../hooks/checkUserStatus"
 
 const useAuth = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const navigate = useNavigate();
 
+  // 🔹 Email/Password Sign-In Handler
   const handleSignIn = async (): Promise<void> => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("User signed in:", userCredential.user);
 
-      // Get the ID token
       const idToken = await userCredential.user.getIdToken();
-      console.log("ID Token:", idToken);
+      localStorage.setItem("firebaseIdToken", idToken);
 
-      // Store the token in localStorage
-      localStorage.setItem('firebaseIdToken', idToken);
-
-      navigate('/home'); // Redirect to home page
+      const userExists = await checkUserStatus(userCredential.user.uid);
+      if (userExists) {
+        navigate("/home");
+      }
     } catch (error: any) {
       console.error("Error signing in:", error.message);
+
+      // 🔹 Show popup ONLY when the user is disabled
+      if (error.code === "auth/user-disabled") {
+        await Swal.fire({
+          icon: "error",
+          title: "Account Disabled",
+          text: "Your account has been disabled. Please contact support.",
+        });
+      }
     }
   };
 
+  // 🔹 Google Sign-In Handler
   const handleGoogleSignIn = async (): Promise<void> => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       console.log("User signed in with Google:", result.user);
 
-      // Get the ID token
       const idToken = await result.user.getIdToken();
-      console.log("ID Token:", idToken);
+      localStorage.setItem("firebaseIdToken", idToken);
 
-      // Store the token in localStorage
-      localStorage.setItem('firebaseIdToken', idToken);
-
-      // Extract user information
       const user = result.user;
-      const userData = {
-        uid: user.uid,
-        email: user.email || '', // Use an empty string if email is null
-        firstName: user.displayName?.split(' ')[0] || '', // Extract first name from displayName
-        lastName: user.displayName?.split(' ')[1] || '', // Extract last name from displayName
-        phoneNumber: '', // Google sign-in doesn't provide phone number
-        isActive: true,
-        role: 'user', // Default role for Google sign-in users
-      };
+      const userExists = await checkUserStatus(user.uid);
 
-      // Send user data to the backend to create a user object
-      const response = await fetch('http://localhost:5000/user', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${idToken}`,
-        },
-        body: JSON.stringify(userData),
-      });
+      if (!userExists) {
+        // If user doesn't exist, create in local DB
+        const newUser = {
+          uid: user.uid,
+          email: user.email || "",
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ")[1] || "",
+          phoneNumber: user.phoneNumber || "",
+          isActive: true,
+          role: "user",
+        };
 
-      if (response.ok) {
-        console.log("User object created in the database");
+        const response = await apiCall("http://localhost:5000/user", "POST", newUser);
+
+        if (response) {
+          console.log("New user added to the local database.");
+          navigate("/home");
+        } else {
+          console.error("Error creating user in the database.");
+        }
       } else {
-        console.error("Error creating user object in the database");
+        navigate("/home");
       }
-
-      navigate('/home'); // Redirect to home page
     } catch (error: any) {
       console.error("Error signing in with Google:", error.message);
+
+      // 🔹 Show popup ONLY when the user is disabled
+      if (error.code === "auth/user-disabled") {
+        await Swal.fire({
+          icon: "error",
+          title: "Account Disabled",
+          text: "Your account has been disabled. Please contact support.",
+        });
+      }
     }
   };
 
+  // 🔹 Logout Handler
   const handleLogout = async (): Promise<void> => {
     try {
       await signOut(auth);
-      localStorage.removeItem('firebaseIdToken'); // Remove the token from localStorage
-      navigate('/login'); // Redirect to the login page
+      localStorage.removeItem("firebaseIdToken");
+      navigate("/login");
     } catch (error) {
       console.error("Error signing out:", error);
     }

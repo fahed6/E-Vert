@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import AuthMiddleware from '../middlewares/authMiddleware'; // Import middleware
 import { UserService } from '../services/userService';
+
 
 export class UserController {
   private userService: UserService;
@@ -13,12 +13,33 @@ export class UserController {
   }
 
   private initializeRoutes() {
-    this.router.post('/', this.add.bind(this));
-    this.router.get('/', AuthMiddleware.decodeToken, AuthMiddleware.isAdmin, this.getAll.bind(this)); //  Admin only
+    this.router.post('/', this.add.bind(this)); // not Protected
+    this.router.get('/', this.getAll.bind(this));  // not Protected
     this.router.get('/:id', this.getById.bind(this)); // not Protected
+    this.router.get('/uid/:uid', this.getByUid.bind(this));  // not Protected
     this.router.put('/:id', this.update.bind(this)); // not Protected
-    this.router.patch('/:id', this.deactivate.bind(this)); // not Protected
     this.router.delete('/:id', this.delete.bind(this)); // not Protected
+    this.router.patch("/:id/activate", this.activate.bind(this)); // Protected
+    this.router.patch("/:id/deactivate", this.deactivate.bind(this));// not Protected
+  }
+
+  public async activate(req: Request, res: Response) {
+    try {
+      const user = await this.userService.activate(Number(req.params.id));
+      user ? res.json(user) : res.status(404).json({ message: "User not found" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
+  // Deactivate a user account
+  public async deactivate(req: Request, res: Response) {
+    try {
+      const user = await this.userService.deactivate(Number(req.params.id));
+      user ? res.json(user) : res.status(404).json({ message: "User not found" });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
   }
 
   // Create a new user
@@ -51,20 +72,20 @@ export class UserController {
     }
   }
 
+    // Get a user by UID
+    public async getByUid(req: Request, res: Response) {
+      try {
+        const user = await this.userService.findByUid(String(req.params.uid));
+        user ? res.json(user) : res.status(404).json({ message: 'User not found' });
+      } catch (error) {
+        res.status(500).json({ error });
+      }
+    }
+
   // Update a user
   public async update(req: Request, res: Response) {
     try {
       const user = await this.userService.update(Number(req.params.id), req.body);
-      user ? res.json(user) : res.status(404).json({ message: 'User not found' });
-    } catch (error) {
-      res.status(500).json({ error });
-    }
-  }
-
-  // Deactivate user
-  public async deactivate(req: Request, res: Response) {
-    try {
-      const user = await this.userService.deactivate(Number(req.params.id));
       user ? res.json(user) : res.status(404).json({ message: 'User not found' });
     } catch (error) {
       res.status(500).json({ error });

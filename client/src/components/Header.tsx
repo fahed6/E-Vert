@@ -115,9 +115,6 @@ const Header = () => {
             <Divider />
             <ListItem disablePadding>
               <ListItemButton onClick={isAuthenticated ? handleLogout : handleLogin}>
-                <ListItemIcon>
-                  {isAuthenticated}
-                </ListItemIcon>
                 <ListItemText primary={isAuthenticated ? "Logout" : "Login"} />
               </ListItemButton>
             </ListItem>

@@ -1,7 +1,7 @@
 import { Repository } from "typeorm";
 import AppDataSource from "../data-source";
 import { User } from "../entities/User";
-
+import admin from "../config/firebase"; // Import Firebase Admin SDK
 
 export class UserService {
   private userRepository: Repository<User>;
@@ -42,14 +42,61 @@ export class UserService {
     return this.findById(id);
   }
 
-  // Soft delete (deactivate user)
+  // Soft delete (deactivate user) & disable in Firebase
   async deactivate(id: number): Promise<User | null> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     await this.userRepository.update(id, { isActive: false });
+
+    // Disable user in Firebase Authentication
+    try {
+      await admin.auth().updateUser(user.uid, { disabled: true });
+      console.log(`User ${user.uid} disabled in Firebase`);
+    } catch (error) {
+      console.error("Error disabling user in Firebase:", error);
+    }
+
     return this.findById(id);
   }
 
-  // Delete user permanently
+  // Reactivate user & enable in Firebase
+  async activate(id: number): Promise<User | null> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    await this.userRepository.update(id, { isActive: true });
+
+    // Enable user in Firebase Authentication
+    try {
+      await admin.auth().updateUser(user.uid, { disabled: false });
+      console.log(`User ${user.uid} enabled in Firebase`);
+    } catch (error) {
+      console.error("Error enabling user in Firebase:", error);
+    }
+
+    return this.findById(id);
+  }
+
+  // Delete user permanently from local DB & Firebase
   async delete(id: number): Promise<void> {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     await this.userRepository.delete(id);
+
+    // Delete user from Firebase Authentication
+    try {
+      await admin.auth().deleteUser(user.uid);
+      console.log(`User ${user.uid} deleted from Firebase`);
+    } catch (error) {
+      console.error("Error deleting user from Firebase:", error);
+    }
   }
 }
