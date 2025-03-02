@@ -10,6 +10,7 @@ import HomePage from './pages/homePage';
 import ProtectedRoute from './config/auth/protectedRoute';
 import  Dashboard  from './pages/DashBoard';
 import UserProfile from './components/UserProfile';
+import UserAddress from './components/UserAddress';
 
 
 const App: React.FC = () => {
@@ -25,7 +26,7 @@ const App: React.FC = () => {
           {/* Dashboard Layout with Nested Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
               <Route path="profile" element={<UserProfile />} />
-
+              <Route path="address" element={<UserAddress />} />
 
               {/* Add more nested routes inside dashboard */} 
           </Route>

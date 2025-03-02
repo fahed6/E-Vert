@@ -1,15 +1,20 @@
 import { Request, Response, Router } from 'express';
 import { UserService } from '../services/userService';
+import { MailService } from '../services/MailService';
 
 
 export class UserController {
   private userService: UserService;
   public router: Router;
+  private mailService : MailService;
+  
 
   constructor() {
     this.userService = new UserService();
     this.router = Router();
     this.initializeRoutes();
+    this.mailService = new MailService();
+    
   }
 
   private initializeRoutes() {
@@ -86,7 +91,9 @@ export class UserController {
   public async update(req: Request, res: Response) {
     try {
       const user = await this.userService.update(Number(req.params.id), req.body);
+      
       user ? res.json(user) : res.status(404).json({ message: 'User not found' });
+      
     } catch (error) {
       res.status(500).json({ error });
     }

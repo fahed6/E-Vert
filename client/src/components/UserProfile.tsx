@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { UserService } from '../services/UserService';
-import { updateEmail, updateProfile, sendPasswordResetEmail } from 'firebase/auth';
+import { Edit } from "@mui/icons-material";
+import { Box } from '@mui/material';
+import { Box as Boxi, Button, Card, DataList, Dialog, Flex, Grid, TextField as RadixTextField, Text } from '@radix-ui/themes';
+import { sendPasswordResetEmail, updateEmail, updateProfile } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
 import { auth } from '../config/firebase-config';
 import useUserData from '../hooks/useUserData';
-import { Box } from '@mui/material';
-import {Box as Boxi,Button, Card, Text, Dialog, Flex, DataList, Grid, TextField as RadixTextField } from '@radix-ui/themes';
-import { Edit } from "@mui/icons-material";
+import { UserService } from '../services/UserService';
 
 const UserProfile: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

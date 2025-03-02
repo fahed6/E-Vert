@@ -27,4 +27,12 @@ export class MailService{
           }
         return mailSender(userEmail,templateId,dynamicData);
     }
+
+    async infoChange(userEmail:string,dynamicData0:string){
+      const templateId=process.env.INFO_CHANGE_TEMPLATE_ID as string;
+      const dynamicData={
+          name:dynamicData0
+        }
+      return mailSender(userEmail,templateId,dynamicData);
+  }
 }

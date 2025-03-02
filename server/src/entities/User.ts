@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Address } from "./Address";
 
 @Entity({ name: "user" })
 export class User {
@@ -28,4 +29,8 @@ export class User {
 
   @Column({ type: "varchar", length: 50, default: "user" })
   role!: "admin" | "user"| "partner"; 
+
+  @OneToOne(() => Address, (address) => address.user, { cascade: true })
+  address!: Address;
+
 }

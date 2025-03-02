@@ -45,6 +45,7 @@ export class UserService {
   // Update user
   async update(id: number, updateData: Partial<User>): Promise<User | null> {
     await this.userRepository.update(id, updateData);
+   // this.mailService.infoChange(user.email,user.firstName);
     return this.findById(id);
   }
 
