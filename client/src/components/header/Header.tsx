@@ -1,26 +1,25 @@
+import Box from "@mui/material/Box";
 import { useState } from "react";
-import Logo from "../Assets/e-vert_LOGO.png";
 import { BsCart2 } from "react-icons/bs";
 import { HiOutlineBars3 } from "react-icons/hi2";
-import Box from "@mui/material/Box";
-
+import Logo from "/src/assets/e-vert_LOGO.png";
+import CommentRoundedIcon from "@mui/icons-material/CommentRounded";
+import HomeIcon from "@mui/icons-material/Home";
+import InfoIcon from "@mui/icons-material/Info";
+import PhoneRoundedIcon from "@mui/icons-material/PhoneRounded";
+import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
+import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import HomeIcon from "@mui/icons-material/Home";
-import InfoIcon from "@mui/icons-material/Info";
-import CommentRoundedIcon from "@mui/icons-material/CommentRounded";
-import PhoneRoundedIcon from "@mui/icons-material/PhoneRounded";
-import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
-import { useNavigate } from "react-router-dom";
-import { auth } from "../config/firebase-config";
 import { signOut } from "firebase/auth";
-
-import { Button} from '@radix-ui/themes';
+import { useNavigate } from "react-router-dom";
+import { auth } from "../../config/firebase-config";
+import "./Header.css";
+import { Button } from '@radix-ui/themes';
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
@@ -53,6 +52,16 @@ const Header = () => {
       icon: <ShoppingCartRoundedIcon />,
       onClick: () => navigate("/cart"),
     },
+    // Conditionally add Profile link when authenticated
+    ...(isAuthenticated
+      ? [
+          {
+            text: "Profile",
+            icon: <ShoppingCartRoundedIcon />,
+            onClick: () => navigate("/dashboard"),
+          },
+        ]
+      : []),
   ];
 
   const handleLogin = () => {
@@ -70,25 +79,34 @@ const Header = () => {
   };
 
   return (
-    
     <nav>
       <div className="nav-logo-container">
-      <a href="/home">  <img src={Logo} alt="Logo" style={{ height: '40px' }}/></a>
+        <a href="/home">
+          <img src={Logo} alt="Logo" style={{ height: "40px" }} />
+        </a>
       </div>
       <div className="navbar-links-container">
-        <a href="/home"> Home</a>
+        <a href="/home">Home</a>
         <a href="/about">About</a>
         <a href="/testimonials">Testimonials</a>
         <a href="/contact">Contact</a>
         <a href="/cart">
           <BsCart2 className="navbar-cart-icon" />
         </a>
+
+        {/* Conditionally render the Profile link based on authentication */}
+        {isAuthenticated && (
+          <a href="/dashboard">
+            Profile
+          </a>
+        )}
+
         {isAuthenticated ? (
-          <Button  onClick={handleLogout} className="left">
+          <Button onClick={handleLogout} className="left">
             Logout
           </Button>
         ) : (
-          <Button  onClick={handleLogin} className="left">
+          <Button onClick={handleLogin} className="left">
             Login
           </Button>
         )}
@@ -125,4 +143,4 @@ const Header = () => {
   );
 };
 
-export default  Header;
+export default Header;

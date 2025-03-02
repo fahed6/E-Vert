@@ -7,6 +7,7 @@ import { MailService } from "../services/MailService";
 export class UserService {
   private userRepository: Repository<User>;
   private mailService = new MailService();
+   
 
 
 
@@ -60,6 +61,7 @@ export class UserService {
     try {
       await admin.auth().updateUser(user.uid, { disabled: true });
       console.log(`User ${user.uid} disabled in Firebase`);
+      this.mailService.deactivateMail(user.email,user.firstName)
     } catch (error) {
       console.error("Error disabling user in Firebase:", error);
     }
@@ -80,6 +82,7 @@ export class UserService {
     try {
       await admin.auth().updateUser(user.uid, { disabled: false });
       console.log(`User ${user.uid} enabled in Firebase`);
+      this.mailService.activateMail(user.email,user.firstName)
     } catch (error) {
       console.error("Error enabling user in Firebase:", error);
     }

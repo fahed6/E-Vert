@@ -8,6 +8,8 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/homePage';
 import ProtectedRoute from './config/auth/protectedRoute';
+import  Dashboard  from './pages/DashBoard';
+import UserProfile from './components/UserProfile';
 
 
 const App: React.FC = () => {
@@ -19,6 +21,15 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/home" element={  <HomePage /> } />
+
+          {/* Dashboard Layout with Nested Routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+              <Route path="profile" element={<UserProfile />} />
+
+
+              {/* Add more nested routes inside dashboard */} 
+          </Route>
+
         </Routes>
       </Layout>
     </Router>
