@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 import { Address } from "./Address";
 
 @Entity({ name: "user" })
+@TableInheritance({ column: { type: "varchar", name: "role" } })
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;

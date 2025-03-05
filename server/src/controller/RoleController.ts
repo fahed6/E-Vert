@@ -1,5 +1,4 @@
 import { Request, Response, Router } from 'express';
-import AuthMiddleware from '../middlewares/authMiddleware';
 import { RoleService } from "../services/RoleService";
 
 export class RoleController {
@@ -13,13 +12,14 @@ export class RoleController {
     }
 
     private initializeRoutes() {
-        this.router.post('/setAdmin', AuthMiddleware.decodeToken, AuthMiddleware.isAdmin, this.setAdmin.bind(this));//  Admin only
-        this.router.post('/setPartner', AuthMiddleware.decodeToken, AuthMiddleware.isAdmin, this.setPartner.bind(this));//  Admin only
+        // Pass uid in the URL
+        this.router.post('/setAdmin/:uid', this.setAdmin.bind(this));
+        this.router.post('/setPartner/:uid', this.setPartner.bind(this));
     }
 
     public async setAdmin(req: Request, res: Response): Promise<void> {
         try {
-            const { uid } = req.body;
+            const { uid } = req.params; // Extract uid from URL parameters
             if (!uid) {
                 res.status(400).json({ error: "UID is required" });
                 return;
@@ -33,7 +33,7 @@ export class RoleController {
 
     public async setPartner(req: Request, res: Response): Promise<void> {
         try {
-            const { uid } = req.body;
+            const { uid } = req.params; // Extract uid from URL parameters
             if (!uid) {
                 res.status(400).json({ error: "UID is required" });
                 return;

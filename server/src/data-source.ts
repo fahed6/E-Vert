@@ -1,6 +1,8 @@
 import { DataSource } from "typeorm";
-import {User} from "./entities/User"; // Ensure the path is correct
 import { Address } from "./entities/Address";
+import { Partner } from "./entities/Partner";
+import { Product } from "./entities/Product";
+import { User } from "./entities/User";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -9,9 +11,9 @@ const AppDataSource = new DataSource({
   username: "postgres",
   password: "123",
   database: "E-Vert",
-  synchronize: true, // Set to false in production
+  synchronize: true, 
   logging: false,
-  entities: [User,Address], // Include all your entities here
+  entities: [User,Address,Product,Partner], 
   migrations: [],
   subscribers: [],
 });

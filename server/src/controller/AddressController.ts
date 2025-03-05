@@ -12,16 +12,9 @@ export class AddressController {
   }
 
   private initializeRoutes() {
-    // Save or update an address
     this.router.post("/", this.saveAddress.bind(this));
-
-    // Get address by user ID
     this.router.get("/:userId", this.getAddressByUserId.bind(this));
-
-    // Update address by user ID
     this.router.put("/:userId", this.updateAddress.bind(this));
-
-    // Delete address by user ID
     this.router.delete("/:userId", this.deleteAddress.bind(this));
   }
 
