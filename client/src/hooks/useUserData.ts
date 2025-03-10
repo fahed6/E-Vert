@@ -1,8 +1,8 @@
 // src/hooks/useUserData.ts
-import { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import { auth } from '../config/firebase-config';
 import { UserService } from '../services/UserService';
-import { onAuthStateChanged } from 'firebase/auth';
 
 const userService = new UserService();
 

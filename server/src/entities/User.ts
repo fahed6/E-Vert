@@ -8,7 +8,7 @@ export class User {
   id!: number;
 
   @Column({ type: "text", unique: true })
-  uid!: string; // Firebase UID
+  uid!: string; 
 
   @Column({ type: "text" })
   firstName!: string;

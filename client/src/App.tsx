@@ -1,16 +1,17 @@
 
+import { Theme } from "@radix-ui/themes";
 import '@radix-ui/themes/styles.css';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import AddProductForm from './components/AddProductForm';
 import Layout from './components/Layout';
-import { Theme } from "@radix-ui/themes";
+import UserAddress from './components/UserAddress';
+import UserProfile from './components/UserProfile';
+import ProtectedRoute from './config/auth/protectedRoute';
+import Dashboard from './pages/DashBoard';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/homePage';
-import ProtectedRoute from './config/auth/protectedRoute';
-import  Dashboard  from './pages/DashBoard';
-import UserProfile from './components/UserProfile';
-import UserAddress from './components/UserAddress';
 
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/home" element={  <HomePage /> } />
+          <Route path="/addproduct" element={<AddProductForm />} />
 
           {/* Dashboard Layout with Nested Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>

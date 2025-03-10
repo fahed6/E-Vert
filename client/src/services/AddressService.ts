@@ -1,6 +1,6 @@
 import { apiCall } from '../config/api/apiCall';
 
-const BASE_URL = 'http://localhost:5000/address'; // Base URL for address endpoints
+const BASE_URL = 'http://localhost:5000/address'; 
 
 export class AddressService {
   // Save or update an address

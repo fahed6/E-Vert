@@ -17,7 +17,10 @@ export class ProductController {
     this.router.get("/:id", this.getProductById.bind(this));
     this.router.put("/:id", this.updateProduct.bind(this));
     this.router.delete("/:id", this.deleteProduct.bind(this));
+    
   }
+
+  
 
   async createProduct(req: Request, res: Response) {
     try {

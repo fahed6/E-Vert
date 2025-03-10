@@ -35,4 +35,5 @@ export class MailService{
         }
       return mailSender(userEmail,templateId,dynamicData);
   }
+  
 }

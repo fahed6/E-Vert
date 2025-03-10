@@ -6,6 +6,7 @@ import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
 import { AddressController } from "./controller/AddressController";
 import { ProductController } from "./controller/ProductController";
+import { PartnerController } from "./controller/PartnerController";
 
 
 
@@ -26,6 +27,9 @@ app.use("/role", roleController.router);
 
 const productController = new ProductController();
 app.use("/product", productController.router);
+
+const partnerController = new PartnerController();
+app.use("/partner", partnerController.router);
 
 const PORT = process.env.PORT || 5000;
 

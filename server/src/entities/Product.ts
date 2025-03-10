@@ -29,7 +29,7 @@ import { Partner } from "./Partner";
   
     // Many-to-one relationship with Partner
     @ManyToOne(() => Partner, (partner) => partner.products)
-    @JoinColumn({ name: "ownerId" }) // Foreign key column
+    @JoinColumn({ name: "ownerId" })
     owner!: Partner;
   
     @Column({ type: "int" })
