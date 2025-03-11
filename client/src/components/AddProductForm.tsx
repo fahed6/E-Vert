@@ -33,27 +33,29 @@ const AddProductForm: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProduct({
-          ...product,
-          image: reader.result as string,
-        });
-      };
-      reader.readAsDataURL(file);
+      setProduct({
+        ...product,
+        image: file, // Store the file object
+      });
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Set the ownerId with the user ID
-      const productWithOwner = {
-        ...product,
-        ownerId: user.id,
-      };
+      // Create a FormData object
+      const formData = new FormData();
+      formData.append("name", product.name || "");
+      formData.append("description", product.description || "");
+      formData.append("stock", String(product.stock));
+      formData.append("price", String(product.price));
+      formData.append("ownerId", String(user.id));
+      if (product.image) {
+        formData.append("image", product.image); // Append the file
+      }
 
-      const newProduct = await productService.createProduct(productWithOwner);
+      // Send the FormData to the backend
+      const newProduct = await productService.createProduct(formData);
       setMessage(`Product "${newProduct.name}" created successfully!`);
       setProduct({
         name: "",
@@ -70,27 +72,25 @@ const AddProductForm: React.FC = () => {
   };
 
   return (
-    <Box maxWidth="750px" >
+    <Box maxWidth="750px">
       <Card>
-         <Flex justify="between" align="center">
-               <Text size='6'> Add Product</Text>
-  
-              </Flex>
+        <Flex justify="between" align="center">
+          <Text size="6">Add Product</Text>
+        </Flex>
 
         <form onSubmit={handleSubmit}>
-          <Flex direction="column" gap="3" >
+          <Flex direction="column" gap="3">
             <Box>
               <Text as="label" size="2" weight="bold">
                 Name:
               </Text>
               <TextField.Root
                 placeholder="Product Name..."
-                  name="name"
-                  value={product.name}
-                  onChange={handleInputChange}
-                  required
-                />
-              
+                name="name"
+                value={product.name}
+                onChange={handleInputChange}
+                required
+              />
             </Box>
 
             <Box>
@@ -100,12 +100,11 @@ const AddProductForm: React.FC = () => {
               <TextArea
                 placeholder="Product Description..."
                 radius="full"
-                  name="description"
-                  value={product.description}
-                  onChange={handleInputChange}
-                  required
-                />
-              
+                name="description"
+                value={product.description}
+                onChange={handleInputChange}
+                required
+              />
             </Box>
 
             <Box>
@@ -113,14 +112,12 @@ const AddProductForm: React.FC = () => {
                 Stock:
               </Text>
               <TextField.Root
-                
-                  type="number"
-                  name="stock"
-                  value={product.stock}
-                  onChange={handleInputChange}
-                  required
-                />
-              
+                type="number"
+                name="stock"
+                value={product.stock}
+                onChange={handleInputChange}
+                required
+              />
             </Box>
 
             <Box>
@@ -128,26 +125,24 @@ const AddProductForm: React.FC = () => {
                 Price:
               </Text>
               <TextField.Root
-               
-                  type="number"
-                  name="price"
-                  value={product.price}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  required
-                />
-             
+                type="number"
+                name="price"
+                value={product.price}
+                onChange={handleInputChange}
+                step="0.01"
+                required
+              />
             </Box>
 
             <Box>
               <Text as="label" size="2" weight="bold">
                 Image:
               </Text>
-              <input type="file" onChange={handleFileChange} />
+              <input type="file" name="image" onChange={handleFileChange} />
             </Box>
 
             <Flex gap="3" justify="end">
-                <Button type="submit">Add Product</Button>
+              <Button type="submit">Add Product</Button>
             </Flex>
           </Flex>
         </form>

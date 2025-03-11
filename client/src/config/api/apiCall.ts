@@ -1,41 +1,32 @@
 export const apiCall = async (
   url: string,
-  method: string = 'GET',
-  body?: any
+  method: string,
+  data?: any,
+  options?: { headers?: Record<string, string> }
 ) => {
   try {
-    const idToken = localStorage.getItem('firebaseIdToken');
-    if (!idToken) {
-      throw new Error("No token found. Please sign in.");
-    }
+    const headers = options?.headers || {};
 
-    const requestOptions: RequestInit = {
-      method: method.toUpperCase(),
-      headers: {
-        'Authorization': `Bearer ${idToken}`,
-        'Content-Type': 'application/json',
-      },
-    };
-
-    if (body) {
-      requestOptions.body = JSON.stringify(body);
-    }
-
-    console.log("Sending Request:", { url, method, body }); // Log request
-
-    const response = await fetch(url, requestOptions);
-    console.log("Received Response:", response); // Log response
-
-    if (response.ok) {
-      const data = await response.json();
-      return data;
+    // If data is FormData, don't set Content-Type header
+    if (data instanceof FormData) {
+      delete headers["Content-Type"];
     } else {
-     
-        const errorData = await response.json();
-        throw new Error(errorData.message || "An error occurred");
-      }
-    } catch (error) {
-      console.error("Error in apiCall:", error);
-      throw error; 
+      headers["Content-Type"] = "application/json";
     }
-  };
+
+    const response = await fetch(url, {
+      method,
+      headers,
+      body: data instanceof FormData ? data : JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error in apiCall:", error);
+    throw error;
+  }
+};

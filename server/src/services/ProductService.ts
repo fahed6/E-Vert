@@ -4,10 +4,8 @@ import { Product } from "../entities/Product";
 
 export class ProductService {
   private productRepository = AppDataSource.getRepository(Product);
-  private partnerRepository = AppDataSource.getRepository(Partner); 
+  private partnerRepository = AppDataSource.getRepository(Partner);
 
-
- 
   async createProduct(productData: Partial<Product>): Promise<Product> {
     const { ownerId, ...rest } = productData;
     const partner = await this.partnerRepository.findOne({
@@ -23,22 +21,19 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-
   async getAllProducts(): Promise<Product[]> {
     return await this.productRepository.find({
       relations: ["owner"],
     });
   }
 
- 
   async getProductById(id: number): Promise<Product | null> {
     return await this.productRepository.findOne({
       where: { id },
-      relations: ["owner"], 
+      relations: ["owner"],
     });
   }
 
-  
   async updateProduct(
     id: number,
     productData: Partial<Product>
@@ -54,13 +49,12 @@ export class ProductService {
       if (!partner) {
         throw new Error("Owner must be a Partner");
       }
-      product.owner = partner; 
-    }   
+      product.owner = partner;
+    }
     Object.assign(product, productData);
     return await this.productRepository.save(product);
   }
 
-  
   async deleteProduct(id: number): Promise<void> {
     const product = await this.productRepository.findOne({ where: { id } });
     if (!product) {
@@ -68,6 +62,4 @@ export class ProductService {
     }
     await this.productRepository.remove(product);
   }
-
-  
 }

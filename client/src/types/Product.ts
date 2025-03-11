@@ -4,6 +4,6 @@ export interface Product {
     description: string;
     stock: number;
     price: number;
-    image: string | null;
+    image: string | File | null;
     ownerId: number; 
   }

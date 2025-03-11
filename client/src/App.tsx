@@ -12,6 +12,7 @@ import Dashboard from './pages/DashBoard';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/homePage';
+import ProductGrid from "./components/ProductGrid";
 
 
 const App: React.FC = () => {
@@ -23,7 +24,9 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/home" element={  <HomePage /> } />
+
           <Route path="/addproduct" element={<AddProductForm />} />
+          <Route path="/productGrid" element={<ProductGrid  />} />
 
           {/* Dashboard Layout with Nested Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>

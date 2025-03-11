@@ -1,12 +1,16 @@
-import { apiCall } from '../config/api/apiCall'; 
-import { Product } from '../types/Product'; 
+import { apiCall } from '../config/api/apiCall';
+import { Product } from '../types/Product';
 
 const BASE_URL = 'http://localhost:5000/product'; // Base URL for product endpoints
 
 export class ProductService {
-  // Create a new product
-  async createProduct(productData: Partial<Product>): Promise<Product> {
-    return apiCall(`${BASE_URL}`, 'POST', productData);
+  // Create a new product with file upload
+  async createProduct(productData: FormData): Promise<Product> {
+    return apiCall(`${BASE_URL}`, 'POST', productData, {
+      headers: {
+        'Content-Type': 'multipart/form-data', 
+      },
+    });
   }
 
   // Get all products

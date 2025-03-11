@@ -19,6 +19,7 @@ import { Partner } from "./Partner";
     stock!: number;
 
     @Column({ type: "text" })
+    
     price!: number;
   
     @Column({ type: "text" })
