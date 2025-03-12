@@ -13,7 +13,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/homePage';
 import ProductGrid from "./components/ProductGrid";
-
+import ProductSlider from "./components/slider/ProductSlider";
 
 const App: React.FC = () => {
   return (
@@ -27,6 +27,7 @@ const App: React.FC = () => {
 
           <Route path="/addproduct" element={<AddProductForm />} />
           <Route path="/productGrid" element={<ProductGrid  />} />
+          <Route path="/ProductSlider" element={<ProductSlider  />} />
 
           {/* Dashboard Layout with Nested Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
