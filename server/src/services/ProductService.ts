@@ -26,6 +26,13 @@ export class ProductService {
       relations: ["owner"],
     });
   }
+  async getRandomProducts(limit: number = 7): Promise<Product[]> {
+    return await this.productRepository.find({
+      relations: ["owner"],
+      take: limit,// Limit the number of results
+      order: { id: "DESC" }, // Optional: Order by ID or any other field
+    });
+  }
 
   async getProductById(id: number): Promise<Product | null> {
     return await this.productRepository.findOne({

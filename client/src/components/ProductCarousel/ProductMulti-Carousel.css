@@ -1,0 +1,12 @@
+/* Custom styles for the carousel */
+.carousel-container {
+    padding: 1rem;
+  }
+  
+  .custom-dot-list-style {
+    margin-top: 1rem;
+  }
+  
+  .carousel-item {
+    padding: 0.5rem;
+  }

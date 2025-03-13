@@ -27,6 +27,7 @@ export class ProductController {
   private initializeRoutes() {
     this.router.post("/", upload.single("image"), this.createProduct.bind(this));
     this.router.get("/", this.getAllProducts.bind(this));
+    this.router.get("/random", this.getRandomProducts.bind(this));
     this.router.get("/:id", this.getProductById.bind(this));
     this.router.put("/:id", this.updateProduct.bind(this));
     this.router.delete("/:id", this.deleteProduct.bind(this));
@@ -46,6 +47,14 @@ export class ProductController {
         ownerId,
       });
       res.status(201).json(product);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+  async getRandomProducts(req: Request, res: Response) {
+    try {
+      const products = await this.productService.getRandomProducts();
+      res.json(products);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

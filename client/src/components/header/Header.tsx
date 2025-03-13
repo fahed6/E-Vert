@@ -48,6 +48,11 @@ const Header = () => {
       onClick: () => navigate("/contact"),
     },
     {
+      text: "Products",
+      icon: <PhoneRoundedIcon />,
+      onClick: () => navigate("/Products"),
+    },
+    {
       text: "Cart",
       icon: <ShoppingCartRoundedIcon />,
       onClick: () => navigate("/cart"),
@@ -88,8 +93,8 @@ const Header = () => {
       <div className="navbar-links-container">
         <a href="/home">Home</a>
         <a href="/about">About</a>
-        <a href="/testimonials">Testimonials</a>
         <a href="/contact">Contact</a>
+        <a href="/Products">Products</a>
         <a href="/cart">
           <BsCart2 className="navbar-cart-icon" />
         </a>

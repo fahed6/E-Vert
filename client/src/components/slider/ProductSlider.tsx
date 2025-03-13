@@ -31,13 +31,7 @@ const ImageSlider: React.FC = () => {
     return () => clearInterval(interval); // Cleanup interval on unmount
   }, [images.length]);
 
-  function showNextImage() {
-    setImageIndex((index) => (index === images.length - 1 ? 0 : index + 1));
-  }
 
-  function showPrevImage() {
-    setImageIndex((index) => (index === 0 ? images.length - 1 : index - 1));
-  }
 
   return (
     <div
@@ -46,14 +40,14 @@ const ImageSlider: React.FC = () => {
         justifyContent: "center",
         alignItems: "flex-start",
         width: "100%",
-        height: "100vh",
-        paddingTop: "20px",
+
+        
       }}
     >
       <section
         aria-label="Image Slider"
         style={{
-          width: "97%",
+          width: "100%",
           height: "350px",
           position: "relative",
           
@@ -81,26 +75,7 @@ const ImageSlider: React.FC = () => {
             />
           ))}
         </div>
-        <button
-          onClick={showPrevImage}
-          className="img-slider-btn"
-          style={{ left: 0 }}
-          aria-label="View Previous Image"
-        >
-          <svg viewBox="0 0 24 24">
-            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
-          </svg>
-        </button>
-        <button
-          onClick={showNextImage}
-          className="img-slider-btn"
-          style={{ right: 0 }}
-          aria-label="View Next Image"
-        >
-          <svg viewBox="0 0 24 24">
-            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
-          </svg>
-        </button>
+    
         <div
           style={{
             position: "absolute",

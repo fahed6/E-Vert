@@ -17,7 +17,9 @@ export class ProductService {
   async getAllProducts(): Promise<Product[]> {
     return apiCall(`${BASE_URL}`, 'GET');
   }
-
+  async getRandomProducts(): Promise<Product[]> {
+    return apiCall(`${BASE_URL}/random`, 'GET');
+  }
   // Get a product by ID
   async getProductById(id: number): Promise<Product> {
     return apiCall(`${BASE_URL}/${id}`, 'GET');

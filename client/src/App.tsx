@@ -5,15 +5,15 @@ import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import AddProductForm from './components/AddProductForm';
 import Layout from './components/Layout';
+import ProductGrid from "./components/ProductGrid";
 import UserAddress from './components/UserAddress';
 import UserProfile from './components/UserProfile';
 import ProtectedRoute from './config/auth/protectedRoute';
 import Dashboard from './pages/DashBoard';
 import LoginPage from './pages/LoginPage';
+import ProductPage from "./pages/ProductPage";
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/homePage';
-import ProductGrid from "./components/ProductGrid";
-import ProductSlider from "./components/slider/ProductSlider";
 
 const App: React.FC = () => {
   return (
@@ -26,8 +26,12 @@ const App: React.FC = () => {
           <Route path="/home" element={  <HomePage /> } />
 
           <Route path="/addproduct" element={<AddProductForm />} />
+
           <Route path="/productGrid" element={<ProductGrid  />} />
-          <Route path="/ProductSlider" element={<ProductSlider  />} />
+
+          <Route path="/Products" element={<ProductPage  />} />
+          
+          
 
           {/* Dashboard Layout with Nested Routes */}
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
