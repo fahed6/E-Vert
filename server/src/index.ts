@@ -1,13 +1,14 @@
 import cors from "cors";
 import express from "express";
+import path from "path";
 import "reflect-metadata";
+import { AddressController } from "./controller/AddressController";
+import { CategoryController } from "./controller/CategoryController";
+import { PartnerController } from "./controller/PartnerController";
+import { ProductController } from "./controller/ProductController";
 import { RoleController } from "./controller/RoleController";
 import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
-import { AddressController } from "./controller/AddressController";
-import { ProductController } from "./controller/ProductController";
-import { PartnerController } from "./controller/PartnerController";
-import path from "path";
 const http = require("http");
 
 
@@ -35,6 +36,9 @@ app.use("/product", productController.router);
 
 const partnerController = new PartnerController();
 app.use("/partner", partnerController.router);
+
+const categoryController = new CategoryController();
+app.use("/category", categoryController.router);
 
 const PORT = process.env.PORT || 5000;
 

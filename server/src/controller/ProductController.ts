@@ -33,65 +33,99 @@ export class ProductController {
     this.router.delete("/:id", this.deleteProduct.bind(this));
   }
 
+  /**
+   * Create a new product
+   */
   async createProduct(req: Request, res: Response) {
     try {
-      const { name, description, stock, price, ownerId } = req.body;
+      const { name, description, stock, price, ownerId, categories } = req.body;
       const image = req.file ? req.file.path : null; // Save the file path
 
       const product = await this.productService.createProduct({
         name,
         description,
-        stock,
-        price,
+        stock: Number(stock),
+        price: Number(price),
         image,
-        ownerId,
+        ownerId: Number(ownerId),
+        categories: JSON.parse(categories), // Parse the categories JSON string
       });
+
       res.status(201).json(product);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
-  async getRandomProducts(req: Request, res: Response) {
-    try {
-      const products = await this.productService.getRandomProducts();
-      res.json(products);
-    } catch (error: any) {
-      res.status(500).json({ message: error.message });
-    }
-  }
 
+  /**
+   * Fetch all products
+   */
   async getAllProducts(req: Request, res: Response) {
     try {
       const products = await this.productService.getAllProducts();
-      res.json(products);
+      res.status(200).json(products);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
 
+  /**
+   * Fetch random products
+   */
+  async getRandomProducts(req: Request, res: Response) {
+    try {
+      const products = await this.productService.getRandomProducts();
+      res.status(200).json(products);
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  }
+
+  /**
+   * Fetch a product by ID
+   */
   async getProductById(req: Request, res: Response) {
     try {
-      const product = await this.productService.getProductById(Number(req.params.id));
-      product
-        ? res.json(product)
-        : res.status(404).json({ message: "Product not found" });
+      const product = await this.productService.getProductById(
+        Number(req.params.id)
+      );
+      if (product) {
+        res.status(200).json(product);
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
 
+  /**
+   * Update a product
+   */
   async updateProduct(req: Request, res: Response) {
     try {
-      const product = await this.productService.updateProduct(
-        Number(req.params.id),
-        req.body
-      );
-      res.json(product);
+      const { name, description, stock, price, ownerId, categories } = req.body;
+      const image = req.file ? req.file.path : null; // Save the file path
+
+      const product = await this.productService.updateProduct(Number(req.params.id), {
+        name,
+        description,
+        stock: Number(stock),
+        price: Number(price),
+        image,
+        ownerId: Number(ownerId),
+        categories: JSON.parse(categories), // Parse the categories JSON string
+      });
+
+      res.status(200).json(product);
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   }
 
+  /**
+   * Delete a product
+   */
   async deleteProduct(req: Request, res: Response) {
     try {
       await this.productService.deleteProduct(Number(req.params.id));

@@ -1,6 +1,7 @@
 import { Box, Button, Card, Flex, Text, TextArea, TextField } from "@radix-ui/themes";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useUserData from "../hooks/useUserData";
+import { CategoryService } from "../services/CategoryService";
 import { ProductService } from "../services/ProductService";
 import { Product } from "../types/Product";
 
@@ -8,17 +9,34 @@ const AddProductForm: React.FC = () => {
   const [product, setProduct] = useState<Partial<Product>>({
     name: "",
     description: "",
+    categories: [], // Updated to support multiple categories
     stock: 0,
     price: 0,
     image: null,
     ownerId: 0, // This will be updated with the user ID
   });
 
+  const [categories, setCategories] = useState<string[]>([]); // List of available categories
   const [message, setMessage] = useState<string | null>(null);
   const productService = new ProductService();
+  const categoryService = new CategoryService();
 
   // Call the hook at the top level
   const user = useUserData();
+
+  // Fetch categories when the component mounts
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await categoryService.getAllCategories();
+        setCategories(data.map((category: { name: any; }) => category.name)); // Extract category names
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,6 +58,19 @@ const AddProductForm: React.FC = () => {
     }
   };
 
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    setProduct((prevProduct) => {
+      const updatedCategories = checked
+        ? [...prevProduct.categories!, value] // Add category if checked
+        : prevProduct.categories!.filter((category) => category !== value); // Remove category if unchecked
+      return {
+        ...prevProduct,
+        categories: updatedCategories,
+      };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -53,6 +84,8 @@ const AddProductForm: React.FC = () => {
       if (product.image) {
         formData.append("image", product.image); // Append the file
       }
+      // Append categories as a JSON string
+      formData.append("categories", JSON.stringify(product.categories));
 
       // Send the FormData to the backend
       const newProduct = await productService.createProduct(formData);
@@ -60,6 +93,7 @@ const AddProductForm: React.FC = () => {
       setProduct({
         name: "",
         description: "",
+        categories: [],
         stock: 0,
         price: 0,
         image: null,
@@ -105,6 +139,27 @@ const AddProductForm: React.FC = () => {
                 onChange={handleInputChange}
                 required
               />
+            </Box>
+
+            <Box>
+              <Text as="label" size="2" weight="bold">
+                Categories:
+              </Text>
+              <Flex direction="column" gap="2">
+                {categories.map((category) => (
+                  <label key={category}>
+                    <Flex align="center" gap="2">
+                      <input
+                        type="checkbox"
+                        value={category}
+                        checked={product.categories?.includes(category)}
+                        onChange={handleCategoryChange}
+                      />
+                      <Text>{category}</Text>
+                    </Flex>
+                  </label>
+                ))}
+              </Flex>
             </Box>
 
             <Box>

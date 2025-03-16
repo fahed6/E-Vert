@@ -1,10 +1,11 @@
-import { Theme } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { Theme } from "@radix-ui/themes";
 import ProductCard from "../ProductCard";
-import { Product } from "../../types/Product"; // Import the Product type
+import { Product } from "../../types/Product";
 import { ProductService } from "../../services/ProductService";
+import "./ProductMulti-Carousel.css";
 
 const productService = new ProductService();
 
@@ -28,7 +29,7 @@ const responsive = {
   },
 };
 
-const ProductCarousel: React.FC = () => {
+const ProductMultiCarousel: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,8 +38,8 @@ const ProductCarousel: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await productService.getRandomProducts();
-        setProducts(data); // Use the fetched data directly
+        const data = await productService.getRandomProducts(); // Fetch products
+        setProducts(data);
       } catch (err) {
         setError("Failed to fetch products. Please try again later.");
       } finally {
@@ -59,27 +60,22 @@ const ProductCarousel: React.FC = () => {
 
   return (
     <Theme>
-      <div style={{ padding: "2rem" ,}}>
-        <Carousel
-          responsive={responsive}
-          infinite={true}
-          autoPlay={true}
-          autoPlaySpeed={3000}
-          keyBoardControl={true}
-          customTransition="all .5s"
-          transitionDuration={500}
-          containerClass="carousel-container"
-          removeArrowOnDeviceType={["tablet", "mobile"]}
-          dotListClass="custom-dot-list-style"
-          itemClass="carousel-item"
-        >
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </Carousel>
-      </div>
+      <Carousel
+        responsive={responsive}
+        containerClass="carousel-container" // Custom class for the container
+        itemClass="carousel-item" // Custom class for each item
+        removeArrowOnDeviceType={["tablet", "mobile"]} // Optional: Remove arrows on specific devices
+        infinite={true} // Enable infinite scrolling
+        
+      >
+        {products.map((product) => (
+          <div key={product.id} style={{ padding: "0 5px", paddingTop:"50px" }}> {/* Adjust padding if needed */}
+            <ProductCard product={product} />
+          </div>
+        ))}
+      </Carousel>
     </Theme>
   );
 };
 
-export default ProductCarousel;
+export default ProductMultiCarousel;

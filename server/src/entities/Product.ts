@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Partner } from "./Partner";
+import { Category } from "./Category";
   
   @Entity({ name: "product" })
   export class Product {
@@ -18,8 +20,7 @@ import { Partner } from "./Partner";
     @Column({ type: "text" })
     stock!: number;
 
-    @Column({ type: "text" })
-    
+    @Column({ type: "text" }) 
     price!: number;
   
     @Column({ type: "text" })
@@ -35,4 +36,7 @@ import { Partner } from "./Partner";
   
     @Column({ type: "int" })
     ownerId!: number; 
+
+    @ManyToMany(() => Category, (category) => category.products)
+  categories!: Category[];
   }

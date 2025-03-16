@@ -48,7 +48,7 @@ const ImageSlider: React.FC = () => {
         aria-label="Image Slider"
         style={{
           width: "100%",
-          height: "350px",
+          height: "400px",
           position: "relative",
           
         }}
