@@ -1,63 +1,157 @@
-import { Box, Card, Flex, Grid, Text } from "@radix-ui/themes";
+import { Box, Card, Checkbox, Flex, Grid, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ProductService } from "../services/ProductService";
+import { CategoryService } from "../services/CategoryService";
 import { Product } from "../types/Product";
+import { Category } from "../types/Category";
 
 const ProductGrid: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const productService = new ProductService();
+  const categoryService = new CategoryService();
+  const navigate = useNavigate(); // Use the useNavigate hook
 
+  // Fetch all products and categories
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       try {
-        const data = await productService.getAllProducts();
-        const productsWithNumberPrice = data.map((product) => ({
+        // Fetch products
+        const productData = await productService.getAllProducts();
+        const productsWithNumberPrice = productData.map((product) => ({
           ...product,
           price: Number(product.price), // Convert price to a number
         }));
         setProducts(productsWithNumberPrice);
-        console.log(data[8].image)
+
+        // Fetch categories
+        const categoryData = await categoryService.getAllCategories();
+        setCategories(categoryData);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Fetch products when selected categories change
+  useEffect(() => {
+    const fetchProductsByCategories = async () => {
+      try {
+        let productData;
+        if (selectedCategories.length > 0) {
+          // Fetch products for each selected category
+          const productPromises = selectedCategories.map((categoryName) =>
+            categoryService.getProductsByCategory(categoryName)
+          );
+          const productArrays = await Promise.all(productPromises);
+          // Merge and deduplicate products
+          const mergedProducts = productArrays.flat();
+          const uniqueProducts = Array.from(new Set(mergedProducts.map((p) => p.id))).map(
+            (id) => mergedProducts.find((p) => p.id === id)!
+          );
+          productData = uniqueProducts;
+        } else {
+          // Fetch all products if no categories are selected
+          productData = await productService.getAllProducts();
+        }
+        const productsWithNumberPrice = productData.map((product) => ({
+          ...product,
+          price: Number(product.price), // Convert price to a number
+        }));
+        setProducts(productsWithNumberPrice);
       } catch (error) {
         console.error("Failed to fetch products:", error);
       }
     };
-    
-    fetchProducts();
-  }, []);
+
+    fetchProductsByCategories();
+  }, [selectedCategories]);
+
+  // Handle category selection
+  const handleCategoryChange = (categoryName: string) => {
+    setSelectedCategories((prevSelected) => {
+      if (prevSelected.includes(categoryName)) {
+        // Remove category if already selected
+        return prevSelected.filter((name) => name !== categoryName);
+      } else {
+        // Add category if not selected
+        return [...prevSelected, categoryName];
+      }
+    });
+  };
+
+  // Navigate to product details page
+  const handleProductClick = (productId: number) => {
+    if (productId) {
+      navigate(`/products/${productId}`); // Navigate to the standalone ProductDetails route
+    } else {
+      console.error("Product ID is undefined");
+    }
+  };
 
   return (
-    <Box>
-      <Text size="6" weight="bold" mb="4">
-        Products
-      </Text>
-      <Grid columns="3" gap="5" width="auto">
-        {products.map((product) => (
-          
-          <Card key={product.id}>
-            <Flex direction="column" gap="3">
-              {product.image && (
-                <img
-                  src={`http://localhost:5000/${product.image}`} // Serve the image
-                  alt={product.name}
-                  style={{ width: "100%", height: "200px", objectFit: "cover" }}
-                  loading="lazy"
+    <Flex>
+      {/* Sidebar for categories */}
+      <Box width="200px" p="4" style={{ borderRight: "1px solid #eee" }}>
+        <Text size="4" weight="bold" mb="4">
+          Categories
+        </Text>
+        <Flex direction="column" gap="2">
+          {categories.map((category) => (
+            <label key={category.id}>
+              <Flex align="center" gap="2">
+                <Checkbox
+                  checked={selectedCategories.includes(category.name)}
+                  onCheckedChange={() => handleCategoryChange(category.name)}
                 />
-              )}
-              <Text size="4" weight="bold">
-                {product.name}
-              </Text>
-              <Text size="2" color="gray">
-                {product.description}
-              </Text>
-              <Flex justify="between" align="center">
-                <Text size="2">Stock: {product.stock}</Text>
-                <Text size="2">${Number(product.price).toFixed(2)}</Text>
+                <Text>{category.name}</Text>
               </Flex>
-            </Flex>
-          </Card>
-        ))}
-      </Grid>
-    </Box>
+            </label>
+          ))}
+        </Flex>
+      </Box>
+
+      {/* Product grid */}
+      <Box flexGrow="1" p="4">
+        <Text size="6" weight="bold" mb="4">
+          Products
+        </Text>
+        <Grid columns="3" gap="5" width="auto">
+          {products.map((product) => (
+            <Card
+              key={product.id}
+              onClick={() => handleProductClick(product.id)} // Pass the product ID
+              style={{ cursor: "pointer" }} // Add pointer cursor
+            >
+              <Flex direction="column" gap="3">
+                {product.image && (
+                  <img
+                    src={`http://localhost:5000/${product.image}`}
+                    alt={product.name}
+                    style={{ width: "100%", height: "200px", objectFit: "cover" }}
+                    loading="lazy"
+                  />
+                )}
+                <Text size="4" weight="bold">
+                  {product.name}
+                </Text>
+                <Text size="2" color="gray">
+                  {product.description}
+                </Text>
+                <Flex justify="between" align="center">
+                  <Text size="2">Stock: {product.stock}</Text>
+                  <Text size="2">${Number(product.price).toFixed(2)}</Text>
+                </Flex>
+              </Flex>
+            </Card>
+          ))}
+        </Grid>
+      </Box>
+    </Flex>
   );
 };
 

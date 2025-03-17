@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Product } from "../types/Product";
 
 const BASE_URL = "http://localhost:5000/category";
 
@@ -8,7 +9,7 @@ export class CategoryService {
    * @param categoryName - The name of the category
    * @returns A list of products in the specified category
    */
-  async getProductsByCategory(categoryName: string) {
+  async getProductsByCategory(categoryName: string): Promise<Product[]> {
     try {
       const response = await axios.get(`${BASE_URL}/${categoryName}`);
       return response.data;

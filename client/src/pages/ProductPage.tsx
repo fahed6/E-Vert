@@ -1,8 +1,8 @@
 import React from "react";
 import { Box } from "@mui/material";
-import { Outlet } from "react-router-dom";
 import ProductCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
 import ProductSlider from "../components/slider/ProductSlider";
+import ProductGrid from "../components/ProductGrid";
 
 const ProductPage: React.FC = () => {
   return (
@@ -13,16 +13,13 @@ const ProductPage: React.FC = () => {
       </Box>
 
       {/* ProductCarousel below the ProductSlider */}
-      <Box sx={{ }}>
+      <Box sx={{}}>
         <ProductCarousel />
       </Box>
 
-      {/* Outlet for nested routes */}
-      <Box
-        component="main"
-        sx={{ }}
-      >
-        <Outlet />
+      {/* ProductGrid below the ProductCarousel */}
+      <Box sx={{}}>
+        <ProductGrid />
       </Box>
     </Box>
   );

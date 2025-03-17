@@ -1,11 +1,9 @@
-
 import { Theme } from "@radix-ui/themes";
 import '@radix-ui/themes/styles.css';
 import React from 'react';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import AddProductForm from './components/AddProductForm';
 import Layout from './components/Layout';
-import ProductGrid from "./components/ProductGrid";
 import UserAddress from './components/UserAddress';
 import UserProfile from './components/UserProfile';
 import ProtectedRoute from './config/auth/protectedRoute';
@@ -14,36 +12,33 @@ import LoginPage from './pages/LoginPage';
 import ProductPage from "./pages/ProductPage";
 import SignupPage from './pages/SignupPage';
 import HomePage from './pages/homePage';
+import ProductDetails from "./pages/ProductDetails";
 
 const App: React.FC = () => {
   return (
     <Theme appearance="inherit" accentColor='grass' radius='full' panelBackground='translucent' scaling="105%">
-    <Router>
-      <Layout>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/home" element={  <HomePage /> } />
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/home" element={<HomePage />} />
 
-          <Route path="/addproduct" element={<AddProductForm />} />
+            <Route path="/addproduct" element={<AddProductForm />} />
 
-          <Route path="/productGrid" element={<ProductGrid  />} />
+            {/* ProductPage with nested route for ProductDetails */}
+            <Route path="/products" element={<ProductPage />}/> 
+            <Route path="/products/:id" element={<ProductDetails />} />
 
-          <Route path="/Products" element={<ProductPage  />} />
-          
-          
-
-          {/* Dashboard Layout with Nested Routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
+            {/* Dashboard Layout with Nested Routes */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
               <Route path="profile" element={<UserProfile />} />
               <Route path="address" element={<UserAddress />} />
-
-              {/* Add more nested routes inside dashboard */} 
-          </Route>
-
-        </Routes>
-      </Layout>
-    </Router>
+              {/* Add more nested routes inside dashboard */}
+            </Route>
+          </Routes>
+        </Layout>
+      </Router>
     </Theme>
   );
 };
