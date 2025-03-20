@@ -4,18 +4,7 @@
   h1 {
     margin: 1rem auto 4rem;
   }
-.b{
-    .card button {
-      border: none;
-      outline: 0;
-      padding: 12px;
-      color: white;
-      background-color: #000;
-      text-align: center;
-      cursor: pointer;
-      font-size: 18px;
-    }
-  }
+
   
   .product--image {
     width: 30%;

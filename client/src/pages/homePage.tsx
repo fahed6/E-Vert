@@ -1,14 +1,16 @@
 
 import React from "react";
+import { FiArrowRight } from "react-icons/fi";
 import BannerBackground from "../Assets/home-banner-background.png";
 import BannerImage from "../Assets/home-banner-image.png";
-import { FiArrowRight } from "react-icons/fi";
+import Footer from "../components/Footer";
 
 
 const HomePage: React.FC = () => {
  
 
   return (
+   <div>
     <div className="home-container">
       
       <div className="home-banner-container">
@@ -31,6 +33,13 @@ const HomePage: React.FC = () => {
         </div>
       </div>
     </div>
+
+    <div style={{ paddingTop:"250px", width:"101%" }}>
+      <Footer />
+      </div>
+
+    </div>
+    
   );
 };
 

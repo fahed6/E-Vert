@@ -1,10 +1,10 @@
 import { Box, Card, Checkbox, Flex, Grid, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProductService } from "../services/ProductService";
 import { CategoryService } from "../services/CategoryService";
-import { Product } from "../types/Product";
+import { ProductService } from "../services/ProductService";
 import { Category } from "../types/Category";
+import { Product } from "../types/Product";
 
 const ProductGrid: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -93,8 +93,14 @@ const ProductGrid: React.FC = () => {
     }
   };
 
+
+  const handleAddToCart = (productId: number) => {
+    console.log(`Product ${productId} added to cart`);
+
+  };
+
   return (
-    <Flex>
+    <Flex style={{ paddingTop: "50px" }}>
       {/* Sidebar for categories */}
       <Box width="200px" p="4" style={{ borderRight: "1px solid #eee" }}>
         <Text size="4" weight="bold" mb="4">
@@ -124,8 +130,8 @@ const ProductGrid: React.FC = () => {
           {products.map((product) => (
             <Card
               key={product.id}
-              onClick={() => handleProductClick(product.id)} // Pass the product ID
-              style={{ cursor: "pointer" }} // Add pointer cursor
+              onClick={() => handleProductClick(product.id)} 
+              style={{ cursor: "pointer" }}  // Add pointer cursor
             >
               <Flex direction="column" gap="3">
                 {product.image && (
@@ -139,13 +145,34 @@ const ProductGrid: React.FC = () => {
                 <Text size="4" weight="bold">
                   {product.name}
                 </Text>
-                <Text size="2" color="gray">
-                  {product.description}
-                </Text>
+
                 <Flex justify="between" align="center">
                   <Text size="2">Stock: {product.stock}</Text>
-                  <Text size="2">${Number(product.price).toFixed(2)}</Text>
+                  <Text size="2">{Number(product.price).toFixed(2)} DT</Text>
                 </Flex>
+
+                {/* Add to Cart button */}
+                <button
+                  style={{
+                   borderRadius:"25px",
+                   border:"none",
+                    outline: "0",
+                    padding: "10px",
+                    color: "white",
+                    backgroundColor: "#17451F",
+                    textAlign: "center",
+                    cursor: "pointer",
+                    fontSize: "15px",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent the card's onClick from firing
+                    handleAddToCart(product.id);
+                  }}
+                >
+                  Add to Cart
+                </button>
               </Flex>
             </Card>
           ))}

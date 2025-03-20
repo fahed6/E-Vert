@@ -48,9 +48,6 @@ const LoginPage: React.FC = () => {
         Continue with Google
       </Button>
 
-      <Button variant="outline" onClick={handleGoogleSignIn}>
-        Continue with Google
-      </Button>
     </Flex>
   );
 };

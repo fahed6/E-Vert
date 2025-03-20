@@ -3,19 +3,32 @@ import admin from "../config/firebase";
 import AppDataSource from "../data-source";
 import { User } from "../entities/User";
 import { MailService } from "../services/MailService";
+import { Cart } from "../entities/Cart";
 
 export class UserService {
   private userRepository: Repository<User>;
   private mailService = new MailService();
+  private cartRepository = AppDataSource.getRepository(Cart);
    
   constructor() {
     this.userRepository = AppDataSource.getRepository(User);
+    
   }
 
   async create(userData: Partial<User>): Promise<User> {
     const user = this.userRepository.create(userData);
-    this.mailService.welcomeMail(user.email,user.firstName);
-    return this.userRepository.save(user);
+
+    // Save the user first
+    const savedUser = await this.userRepository.save(user);
+
+    // Create a cart for the user
+    const cart = this.cartRepository.create({ userId: savedUser.id, items: [] });
+    await this.cartRepository.save(cart);
+
+    // Send welcome email
+    this.mailService.welcomeMail(savedUser.email, savedUser.firstName);
+
+    return savedUser;
   }
 
   async findById(id: number): Promise<User | null> {

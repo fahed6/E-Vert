@@ -12,7 +12,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="card">
         <img className="product--image" src={`http://localhost:5000/${product.image}`} alt="product image" />
         <h3>{product.name}</h3>
-        <p className="price">{product.price}</p>
+        <p className="price"> {product.price} DT</p>
        
         <p>
           <button>Add to Cart</button>

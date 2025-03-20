@@ -1,8 +1,9 @@
-import React from "react";
 import { Box } from "@mui/material";
+import React from "react";
+import Footer from "../components/Footer";
 import ProductCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
-import ProductSlider from "../components/slider/ProductSlider";
 import ProductGrid from "../components/ProductGrid";
+import ProductSlider from "../components/slider/ProductSlider";
 
 const ProductPage: React.FC = () => {
   return (
@@ -21,7 +22,12 @@ const ProductPage: React.FC = () => {
       <Box sx={{}}>
         <ProductGrid />
       </Box>
+          
+    <div style={{ paddingTop:"250px", width:"101%" }}>
+      <Footer />
+      </div>
     </Box>
+    
   );
 };
 

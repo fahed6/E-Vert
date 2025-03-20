@@ -8,11 +8,11 @@ import UserAddress from './components/UserAddress';
 import UserProfile from './components/UserProfile';
 import ProtectedRoute from './config/auth/protectedRoute';
 import Dashboard from './pages/DashBoard';
+import HomePage from './pages/homePage';
 import LoginPage from './pages/LoginPage';
+import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import SignupPage from './pages/SignupPage';
-import HomePage from './pages/homePage';
-import ProductDetails from "./pages/ProductDetails";
 
 const App: React.FC = () => {
   return (
@@ -25,6 +25,8 @@ const App: React.FC = () => {
             <Route path="/home" element={<HomePage />} />
 
             <Route path="/addproduct" element={<AddProductForm />} />
+
+
 
             {/* ProductPage with nested route for ProductDetails */}
             <Route path="/products" element={<ProductPage />}/> 

@@ -1,10 +1,12 @@
-import { Box, Flex, Text, Button } from "@radix-ui/themes";
+import { ChevronLeft } from "@mui/icons-material";
+import { IconButton } from "@mui/material";
+import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import Footer from "../components/Footer";
 import { ProductService } from "../services/ProductService";
 import { Product } from "../types/Product";
-import { IconButton } from "@mui/material";
-import { ChevronLeft } from "@mui/icons-material";
+import ProductMultiCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get the product ID from the URL
@@ -90,6 +92,13 @@ const ProductDetails: React.FC = () => {
           </Flex>
         </Box>
       </Flex>
+      <Box>
+        <Text> see products</Text>
+        <ProductMultiCarousel/>
+      </Box>
+    <div style={{ paddingTop:"250px", width:"101%" }}>
+      <Footer />
+      </div>
     </Box>
   );
 };
