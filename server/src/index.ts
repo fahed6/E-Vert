@@ -9,6 +9,7 @@ import { ProductController } from "./controller/ProductController";
 import { RoleController } from "./controller/RoleController";
 import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
+import { CartController } from "./controller/CartController";
 const http = require("http");
 
 
@@ -39,6 +40,9 @@ app.use("/partner", partnerController.router);
 
 const categoryController = new CategoryController();
 app.use("/category", categoryController.router);
+
+const cartController = new CartController();
+app.use("/cart", cartController.router);
 
 const PORT = process.env.PORT || 5000;
 

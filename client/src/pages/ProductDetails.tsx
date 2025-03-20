@@ -7,14 +7,19 @@ import Footer from "../components/Footer";
 import { ProductService } from "../services/ProductService";
 import { Product } from "../types/Product";
 import ProductMultiCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
+import { CartService } from "../services/CartService";
+import useUserData from "../hooks/useUserData";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get the product ID from the URL
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [cartError, setCartError] = useState<string | null>(null);
   const navigate = useNavigate();
   const productService = new ProductService();
+  const cartService = new CartService();
+  const user = useUserData();
 
   // Fetch product details when the component mounts
   useEffect(() => {
@@ -31,6 +36,28 @@ const ProductDetails: React.FC = () => {
 
     fetchProduct();
   }, [id]);
+
+  // Handle adding a product to the cart
+  const handleAddToCart = async () => {
+    if (!user?.id) {
+      setCartError("Please log in to add items to your cart.");
+      return;
+    }
+
+    if (!product) {
+      setCartError("Product not found.");
+      return;
+    }
+
+    try {
+      await cartService.addToCart(user.id, product.id, 1); // Add 1 item by default
+      setCartError(null);
+      alert("Product added to cart!");
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+      setCartError("Failed to add product to cart. Please try again.");
+    }
+  };
 
   if (loading) {
     return <Text>Loading...</Text>;
@@ -86,18 +113,34 @@ const ProductDetails: React.FC = () => {
             </Text>
 
             {/* Add to cart button */}
-            <Button variant="solid" size="3" style={{ width: "150px" }}>
+            <Button
+              variant="solid"
+              size="3"
+              style={{ width: "150px" }}
+              onClick={handleAddToCart}
+            >
               Add to Cart
             </Button>
+
+            {/* Display cart error */}
+            {cartError && (
+              <Text size="2" color="red">
+                {cartError}
+              </Text>
+            )}
           </Flex>
         </Box>
       </Flex>
+
+      {/* Related products carousel */}
       <Box>
-        <Text> see products</Text>
-        <ProductMultiCarousel/>
+        <Text>See related products</Text>
+        <ProductMultiCarousel />
       </Box>
-    <div style={{ paddingTop:"250px", width:"101%" }}>
-      <Footer />
+
+      {/* Footer */}
+      <div style={{ paddingTop: "250px", width: "101%" }}>
+        <Footer />
       </div>
     </Box>
   );

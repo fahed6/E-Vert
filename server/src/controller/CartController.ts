@@ -13,20 +13,16 @@ export class CartController {
 
   private initializeRoutes() {
     // Bind the methods to the class instance
-    this.router.get("/", this.getCart.bind(this));
-    this.router.post("/add", this.addToCart.bind(this));
-    this.router.post("/remove", this.removeFromCart.bind(this));
-    this.router.put("/update", this.updateCartItem.bind(this));
-    this.router.delete("/clear", this.clearCart.bind(this));
+    this.router.get("/:id", this.getCart.bind(this));
+    this.router.post("/:id/add", this.addToCart.bind(this));
+    this.router.post("/:id/remove", this.removeFromCart.bind(this));
+    this.router.put("/:id/update", this.updateCartItem.bind(this));
+    this.router.delete("/:id/clear", this.clearCart.bind(this));
   }
 
   private async getCart(req: Request, res: Response): Promise<void> {
     try {
-      if (!req.user) {
-        res.status(401).json({ message: "User not authenticated" });
-        return; // Ensure the function exits after sending the response
-      }
-      const userId = (req.user as any).id; // Access the user ID
+      const userId = (req.params.id as any).id; // Access the user ID
       const cart = await this.cartService.getCart(userId);
       res.status(200).json(cart);
     } catch (error: any) {
@@ -34,13 +30,10 @@ export class CartController {
     }
   }
 
-  private async addToCart(req: Request, res: Response): Promise<void> {
+  private async addToCart(req: Request, res: Response) {
     try {
-      if (!req.user) {
-        res.status(401).json({ message: "User not authenticated" });
-        return; // Ensure the function exits after sending the response
-      }
-      const userId = (req.user as any).id; // Access the user ID
+      
+      const userId = (req.params.id as any).id; // Access the user ID
       const { productId, quantity, size } = req.body;
       const cart = await this.cartService.addToCart(userId, productId, quantity, size);
       res.status(200).json(cart);
@@ -49,13 +42,10 @@ export class CartController {
     }
   }
 
-  private async removeFromCart(req: Request, res: Response): Promise<void> {
+  private async removeFromCart(req: Request, res: Response) {
     try {
-      if (!req.user) {
-        res.status(401).json({ message: "User not authenticated" });
-        return; // Ensure the function exits after sending the response
-      }
-      const userId = (req.user as any).id; // Access the user ID
+      
+      const userId = (req.params.id as any).id; // Access the user ID
       const { productId, size } = req.body;
       const cart = await this.cartService.removeFromCart(userId, productId, size);
       res.status(200).json(cart);
@@ -64,13 +54,10 @@ export class CartController {
     }
   }
 
-  private async updateCartItem(req: Request, res: Response): Promise<void> {
+  private async updateCartItem(req: Request, res: Response) {
     try {
-      if (!req.user) {
-        res.status(401).json({ message: "User not authenticated" });
-        return; // Ensure the function exits after sending the response
-      }
-      const userId = (req.user as any).id; // Access the user ID
+      
+      const userId = (req.params.id as any).id; // Access the user ID
       const { productId, quantity, size } = req.body;
       const cart = await this.cartService.updateCartItem(userId, productId, quantity, size);
       res.status(200).json(cart);
@@ -79,13 +66,10 @@ export class CartController {
     }
   }
 
-  private async clearCart(req: Request, res: Response): Promise<void> {
+  private async clearCart(req: Request, res: Response){
     try {
-      if (!req.user) {
-        res.status(401).json({ message: "User not authenticated" });
-        return; // Ensure the function exits after sending the response
-      }
-      const userId = (req.user as any).id; // Access the user ID
+      
+      const userId = (req.params.id as any).id; // Access the user ID
       await this.cartService.clearCart(userId);
       res.status(204).send();
     } catch (error: any) {

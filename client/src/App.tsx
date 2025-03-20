@@ -13,6 +13,7 @@ import LoginPage from './pages/LoginPage';
 import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import SignupPage from './pages/SignupPage';
+import CartPage from "./pages/CartPage";
 
 const App: React.FC = () => {
   return (
@@ -26,7 +27,7 @@ const App: React.FC = () => {
 
             <Route path="/addproduct" element={<AddProductForm />} />
 
-
+            <Route path="/cart" element={<CartPage />} />
 
             {/* ProductPage with nested route for ProductDetails */}
             <Route path="/products" element={<ProductPage />}/> 
