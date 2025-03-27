@@ -1,6 +1,8 @@
 import { Box, Card, Checkbox, Flex, Grid, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useUserData from "../hooks/useUserData";
+import { CartService } from "../services/CartService";
 import { CategoryService } from "../services/CategoryService";
 import { ProductService } from "../services/ProductService";
 import { Category } from "../types/Category";
@@ -12,7 +14,9 @@ const ProductGrid: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const productService = new ProductService();
   const categoryService = new CategoryService();
-  const navigate = useNavigate(); // Use the useNavigate hook
+  const navigate = useNavigate();
+  const user = useUserData();
+  const cartService = new CartService(); // Use the useNavigate hook
 
   // Fetch all products and categories
   useEffect(() => {
@@ -94,9 +98,19 @@ const ProductGrid: React.FC = () => {
   };
 
 
-  const handleAddToCart = (productId: number) => {
-    console.log(`Product ${productId} added to cart`);
+  const handleAddToCart = async (productid: number) => {
+    if (!user?.id) {
+      alert("Please log in to add items to your cart.");
+      return;
+    }
 
+    try {
+      await cartService.addToCart(user.id, productid, 1); // Add 1 item by default
+      alert("Product added to cart!");
+    } catch (error) {
+      console.error("Failed to add product to cart:", error);
+      alert("Failed to add product to cart. Please try again.");
+    }
   };
 
   return (

@@ -60,6 +60,11 @@ const Sidebar: React.FC = () => {
       icon: <LocationIcon />,
       onClick: () => navigate("address"),
     },
+    {
+      text: "Orders",
+      icon: <LocationIcon />,
+      onClick: () => navigate("orders"),
+    },
   ];
 
   

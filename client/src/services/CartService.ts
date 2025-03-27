@@ -32,6 +32,12 @@ export class CartService {
   }
 
   public async clearCart(userId: number): Promise<void> {
-    return await apiCall(`${this.BASE_URL}/${userId}/clear`, "DELETE");
+    try {
+      await apiCall(`${this.BASE_URL}/${userId}/clear`, "DELETE");
+    } catch (error) {
+      console.error('Clear cart error:', error);
+      // Still resolve the promise since cart clearing isn't critical
+      return;
+    }
   }
 }

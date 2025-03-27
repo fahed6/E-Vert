@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
 import { Address } from "./Address";
 
 @Entity({ name: "user" })
@@ -34,4 +34,6 @@ export class User {
   @OneToOne(() => Address, (address) => address.user, { cascade: true })
   address!: Address;
 
+  @OneToMany("Order", "user")
+orders!: import("./Order").Order[];
 }

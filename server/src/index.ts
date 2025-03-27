@@ -10,6 +10,7 @@ import { RoleController } from "./controller/RoleController";
 import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
 import { CartController } from "./controller/CartController";
+import { OrderController } from "./controller/OrderController";
 const http = require("http");
 
 
@@ -43,6 +44,9 @@ app.use("/category", categoryController.router);
 
 const cartController = new CartController();
 app.use("/cart", cartController.router);
+
+const orderController = new OrderController();
+app.use("/order", orderController.router);
 
 const PORT = process.env.PORT || 5000;
 

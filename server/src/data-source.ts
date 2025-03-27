@@ -6,6 +6,8 @@ import { Product } from "./entities/Product";
 import { User } from "./entities/User";
 import { Cart } from "./entities/Cart";
 import { CartItem } from "./entities/CartItem";
+import { Payment } from "./entities/Payment";
+import { Order } from "./entities/Order";
 
 const AppDataSource = new DataSource({
   type: "postgres",
@@ -16,7 +18,7 @@ const AppDataSource = new DataSource({
   database: "E-Vert",
   synchronize: true, 
   logging: false,
-  entities: [User,Address,Product,Partner,Category,Cart,CartItem], 
+  entities: [User,Address,Product,Partner,Category,Cart,CartItem,Order,Payment], 
   migrations: [],
   subscribers: [],
 });

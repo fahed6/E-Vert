@@ -66,13 +66,18 @@ export class CartController {
     }
   }
 
-  private async clearCart(req: Request, res: Response){
+  private async clearCart(req: Request, res: Response): Promise<void> {
     try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        res.status(400).json({ message: "Invalid user ID" });
+        return;
+      }
       
-      const userId = (req.params.id as any).id; // Access the user ID
       await this.cartService.clearCart(userId);
       res.status(204).send();
     } catch (error: any) {
+      console.error("Clear cart error:", error);
       res.status(500).json({ message: error.message });
     }
   }

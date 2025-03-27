@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CartService } from '../services/CartService';
 import useUserData from '../hooks/useUserData';
 import { 
@@ -32,6 +32,7 @@ const CartPage: React.FC = () => {
   const [clearCartDialogOpen, setClearCartDialogOpen] = useState(false);
   const user = useUserData();
   const cartService = new CartService();
+    const navigate = useNavigate();
 
   // Calculate total price from cart items
   const calculateTotalPrice = (items: CartItem[]): number => {
@@ -286,7 +287,7 @@ const CartPage: React.FC = () => {
               <Text weight="bold">Total</Text>
               <Text weight="bold">${totalPrice.toFixed(2)}</Text>
             </Flex>
-            <Button size="3" mt="2">Proceed to Checkout</Button>
+            <Button size="3" mt="2"  onClick={() => navigate('/checkout')}>Proceed to Checkout</Button>
           </Flex>
         </Card>
       </Flex>

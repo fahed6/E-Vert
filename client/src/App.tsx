@@ -14,6 +14,8 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import SignupPage from './pages/SignupPage';
 import CartPage from "./pages/CartPage";
+import CheckoutPage from "./pages/CheckoutPage";
+import UserOrders from "./components/UserOrders";
 
 const App: React.FC = () => {
   return (
@@ -29,6 +31,8 @@ const App: React.FC = () => {
 
             <Route path="/cart" element={<CartPage />} />
 
+            <Route path="/checkout" element={<CheckoutPage />} />
+
             {/* ProductPage with nested route for ProductDetails */}
             <Route path="/products" element={<ProductPage />}/> 
             <Route path="/products/:id" element={<ProductDetails />} />
@@ -37,6 +41,7 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>}>
               <Route path="profile" element={<UserProfile />} />
               <Route path="address" element={<UserAddress />} />
+              <Route path="orders" element={<UserOrders />} />
               {/* Add more nested routes inside dashboard */}
             </Route>
           </Routes>
