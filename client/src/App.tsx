@@ -16,6 +16,7 @@ import SignupPage from './pages/SignupPage';
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import UserOrders from "./components/UserOrders";
+import ChangePasswordPage from "./pages/ChangePasswordPage";
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,8 @@ const App: React.FC = () => {
             <Route path="/cart" element={<CartPage />} />
 
             <Route path="/checkout" element={<CheckoutPage />} />
+
+            <Route path="/password" element={<ChangePasswordPage />} />
 
             {/* ProductPage with nested route for ProductDetails */}
             <Route path="/products" element={<ProductPage />}/> 

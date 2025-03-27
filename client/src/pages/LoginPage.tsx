@@ -4,6 +4,7 @@ import useAuth from '../hooks/useAuth';
 import "../App.css";
 
 
+
 const LoginPage: React.FC = () => {
   const {
     email,
@@ -13,6 +14,7 @@ const LoginPage: React.FC = () => {
     handleSignIn,
     handleGoogleSignIn,
   } = useAuth();
+
 
   return (
     <Flex direction="column" gap="4" align="center" justify="center" style={{ height: '95vh' }}>
@@ -35,8 +37,13 @@ const LoginPage: React.FC = () => {
       </Flex>
 
       <Text size="2">
-        Don't have an account? <Link href="/signup">Sign Up </Link>
+       Forget Your Password? <Link href="/password"> Change Password </Link>
       </Text>
+
+      <Text size="2">
+        Don't have an account? <Link href="/signup"> Sign Up </Link>
+      </Text>
+      
 
       <Flex align="center" gap="2" style={{ width: '300px' }}>
         <Separator style={{ flex: 1 }} />
