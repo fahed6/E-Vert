@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import {
   Button,
   Card,
@@ -5,12 +6,12 @@ import {
   Flex,
   Heading,
   RadioGroup,
-  Spinner,
   Table,
   Text
 } from '@radix-ui/themes';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
 import useUserData from '../hooks/useUserData';
 import { AddressService } from '../services/AddressService';
 import { CartService } from '../services/CartService';
@@ -104,10 +105,17 @@ const CheckoutPage: React.FC = () => {
   // Show loading spinner while data is being fetched
   if (loading) {
     return (
-      <Container size="3" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Spinner size="3" />
-      </Container>
-    );
+      <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Box>
+  );
   }
 
   if (error) {

@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { auth } from '../config/firebase-config';
 import useUserData from '../hooks/useUserData';
 import { UserService } from '../services/UserService';
+import { BounceLoader } from "react-spinners";
 
 const UserProfile: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -29,7 +30,7 @@ const UserProfile: React.FC = () => {
 
   const handleSave = async () => {
     if (!user) return;
-
+  
     try {
       const updatedUser = {
         ...user,
@@ -38,10 +39,10 @@ const UserProfile: React.FC = () => {
         email: newEmail,
         phoneNumber: newPhoneNumber,
       };
-
+  
       // Update in PostgreSQL
       await userService.updateUser(user.id, updatedUser);
-
+  
       // Update in Firebase (if applicable)
       const currentUser = auth.currentUser;
       if (currentUser) {
@@ -52,26 +53,26 @@ const UserProfile: React.FC = () => {
           await updateEmail(currentUser, newEmail);
         }
       }
-
+  
       setIsDialogOpen(false);
+      
       Swal.fire({
         title: "Profile updated successfully!",
         icon: "success",
         showConfirmButton: false,
-        timer: 1500,  
+        timer: 1500,  // 1.5 seconds
+      }).then(() => {
+        window.location.reload(); // Reload after alert closes
       });
-
-      // Refresh the page to show the updated data
-      window.location.reload();
+  
     } catch (error) {
       console.error("Error updating profile:", error);
       Swal.fire({
         title: "Failed to update profile",
         icon: "error",
         showConfirmButton: false,
-        timer: 1500,  
+        timer: 1500,
       });
-     
     }
   };
 
@@ -108,7 +109,18 @@ const UserProfile: React.FC = () => {
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Box>
+  );
   }
 
   return (

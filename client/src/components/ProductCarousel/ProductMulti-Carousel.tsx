@@ -1,10 +1,12 @@
+import { Box } from "@mui/material";
+import { Theme } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { Theme } from "@radix-ui/themes";
-import ProductCard from "../ProductCard";
-import { Product } from "../../types/Product";
+import { BounceLoader } from "react-spinners";
 import { ProductService } from "../../services/ProductService";
+import { Product } from "../../types/Product";
+import ProductCard from "../ProductCard";
 import "./ProductMulti-Carousel.css";
 
 const productService = new ProductService();
@@ -51,7 +53,18 @@ const ProductMultiCarousel: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Box>
+  );
   }
 
   if (error) {

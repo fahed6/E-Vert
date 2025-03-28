@@ -49,7 +49,11 @@ export class UserService {
 
   async update(id: number, updateData: Partial<User>): Promise<User | null> {
     await this.userRepository.update(id, updateData);
-   // this.mailService.infoChange(user.email,user.firstName);
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { id }});
+    if (user){
+    this.mailService.infoChange(user.email,user.firstName);
+  }
     return this.findById(id);
   }
 

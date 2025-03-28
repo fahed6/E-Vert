@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useUserData from "../hooks/useUserData";
 import { AddressService } from "../services/AddressService";
+import { BounceLoader} from 'react-spinners';
+import { Box } from "@mui/material";
 
 const UserAddress: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -56,9 +58,11 @@ const UserAddress: React.FC = () => {
         icon: "success",
         showConfirmButton: false,
         timer: 1500,  
+      }).then(() => {
+        window.location.reload();
       });
 
-      window.location.reload();
+      
     } catch (error) {
       console.error("Error updating address:", error);
       Swal.fire({
@@ -72,7 +76,18 @@ const UserAddress: React.FC = () => {
   };
 
   if (!user) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Box>
+  );
   }
 
   return (

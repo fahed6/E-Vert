@@ -45,12 +45,15 @@ export class AddressService {
 
   // Update address by user ID
   async updateAddress(userId: number, addressData: Partial<Address>): Promise<Address> {
+    const userRepository = AppDataSource.getRepository(User);
+    const user = await userRepository.findOne({ where: { id: userId }, relations: ["address"] });
     const address = await this.getAddressByUserId(userId);
     if (!address) {
       throw new Error("Address not found");
     }
     Object.assign(address, addressData);
-    // this.mailService.infoChange(user.email,user.firstName);
+    if (user){
+    this.mailService.infoChange(user.email,user.firstName);}
     return await this.addressRepository.save(address);
   }
 

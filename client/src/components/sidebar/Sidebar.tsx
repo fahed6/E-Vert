@@ -1,27 +1,28 @@
-import React, { useState, useEffect } from "react";
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  IconButton,
-  Toolbar,
-  ListItemButton,
-  CircularProgress, 
-} from "@mui/material";
 import {
   AccountCircle as AccountIcon,
-  LocationOn as LocationIcon,
-  AdminPanelSettings as AdminIcon, 
-  ChevronRight as ChevronRightIcon,
+  AdminPanelSettings as AdminIcon,
   ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
+  LocationOn as LocationIcon,
 } from "@mui/icons-material";
+import {
+  Box,
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
 import { auth } from "../../config/firebase-config";
-import './Sidebar.css';
 import { checkAdmin } from "../../hooks/checkAdmin";
+import './Sidebar.css';
 
 const Sidebar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
@@ -84,7 +85,17 @@ const Sidebar: React.FC = () => {
   if (isLoading) {
     return (
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-        <CircularProgress />
+        
+      <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Box>
       </div>
     );
   }

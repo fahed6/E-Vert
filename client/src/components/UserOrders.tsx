@@ -2,6 +2,8 @@ import { Box as Boxi, Card, Flex, Grid, Text, Heading, Badge } from '@radix-ui/t
 import React, { useEffect, useState } from 'react';
 import useUserData from '../hooks/useUserData';
 import { OrderService } from '../services/OrderService';
+import { Box } from '@mui/material';
+import { BounceLoader } from 'react-spinners';
 
 
 
@@ -63,9 +65,31 @@ const UserOrders: React.FC = () => {
     }
   };
 
-  if (!user) return <div>Loading user data...</div>;
+  if (!user)  return (
+    <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100px',
+    }}
+  >
+  <BounceLoader color="#4CAF50" size={35}/>
+  </Box>
+);
   if (error) return <Text color="red">{error}</Text>;
-  if (loading) return <Boxi style={{ padding: '2rem' }}><Text>Loading orders...</Text></Boxi>;
+  if (loading) return (
+        <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100px',
+        }}
+      >
+      <BounceLoader color="#4CAF50" size={35}/>
+      </Box>
+    );
   if (orders.length === 0) return <Boxi style={{ padding: '2rem' }}><Text>No orders found</Text></Boxi>;
 
   return (

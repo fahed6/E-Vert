@@ -1,15 +1,16 @@
 import { ChevronLeft } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
+import { Box as Boxi, IconButton } from "@mui/material";
 import { Box, Button, Flex, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { BounceLoader } from "react-spinners";
+import Swal from "sweetalert2";
 import Footer from "../components/Footer";
+import ProductMultiCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
+import useUserData from "../hooks/useUserData";
+import { CartService } from "../services/CartService";
 import { ProductService } from "../services/ProductService";
 import { Product } from "../types/Product";
-import ProductMultiCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
-import { CartService } from "../services/CartService";
-import useUserData from "../hooks/useUserData";
-import Swal from "sweetalert2";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get the product ID from the URL
@@ -67,7 +68,18 @@ const ProductDetails: React.FC = () => {
   };
 
   if (loading) {
-    return <Text>Loading...</Text>;
+    return (
+      <Boxi
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Boxi>
+  );
   }
 
   if (error) {

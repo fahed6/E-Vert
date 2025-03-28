@@ -1,27 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { CartService } from '../services/CartService';
-import useUserData from '../hooks/useUserData';
-import { 
+import {
+  Add as AddIcon,
+  CancelOutlined as CancelIcon,
+  Remove as RemoveIcon,
+  DeleteOutline as TrashIcon
+} from '@mui/icons-material';
+import { Box as Boxi } from '@mui/material';
+import {
+  AlertDialog,
+  Badge,
   Box,
   Button,
   Card,
   Container,
   Flex,
   Heading,
-  Text,
-  Badge,
   Table,
-  TextField,
-  AlertDialog
+  Text,
+  TextField
 } from '@radix-ui/themes';
-import {
-  Add as AddIcon,
-  Remove as RemoveIcon,
-  CancelOutlined as CancelIcon,
-  DeleteOutline as TrashIcon,
-  LoopOutlined as ReloadIcon
-} from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
+import useUserData from '../hooks/useUserData';
+import { CartService } from '../services/CartService';
 import { Cart } from '../types/Cart';
 import { CartItem } from '../types/CartItem';
 
@@ -133,10 +134,17 @@ const CartPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Flex justify="center" align="center" style={{ minHeight: '70vh' }}>
-        <ReloadIcon style={{ animation: 'spin 1s linear infinite' }} />
-      </Flex>
-    );
+      <Boxi
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+      }}
+    >
+    <BounceLoader color="#4CAF50" size={35}/>
+    </Boxi>
+  );
   }
 
   if (error) {
