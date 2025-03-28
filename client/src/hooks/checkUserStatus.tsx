@@ -11,10 +11,11 @@ export const checkUserStatus = async (uid: string): Promise<boolean> => {
     }
 
     if (!user.isActive) {
-      await Swal.fire({
+      Swal.fire({
+        title: "Your account has been disabled. Please contact support!",
         icon: "error",
-        title: "Account Disabled",
-        text: "Your account has been disabled. Please contact support.",
+        showConfirmButton: false,
+        timer: 1500,  
       });
       return false; // User is deactivated
     }

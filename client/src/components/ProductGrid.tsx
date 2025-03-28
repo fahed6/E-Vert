@@ -1,6 +1,7 @@
 import { Box, Card, Checkbox, Flex, Grid, Text } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import useUserData from "../hooks/useUserData";
 import { CartService } from "../services/CartService";
 import { CategoryService } from "../services/CategoryService";
@@ -100,16 +101,31 @@ const ProductGrid: React.FC = () => {
 
   const handleAddToCart = async (productid: number) => {
     if (!user?.id) {
-      alert("Please log in to add items to your cart.");
+      Swal.fire({
+        title: "Please log in to add items to your cart.",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
       return;
     }
 
     try {
-      await cartService.addToCart(user.id, productid, 1); // Add 1 item by default
-      alert("Product added to cart!");
+      await cartService.addToCart(user.id, productid, 1); 
+      Swal.fire({
+        title: "Product added to cart!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
     } catch (error) {
       console.error("Failed to add product to cart:", error);
-      alert("Failed to add product to cart. Please try again.");
+      Swal.fire({
+        title: "Failed to add product to cart. Please try again.",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
     }
   };
 

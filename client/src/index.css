@@ -1,4 +1,6 @@
-
+.swal2-title {
+  font-family: 'Your-Font-Name', sans-serif !important;
+}
  * {
   margin: 0;
   padding: 0;

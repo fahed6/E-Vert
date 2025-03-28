@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { Box as Boxi, Button, Card, DataList, Dialog, Flex, Grid, TextField as RadixTextField, Text } from '@radix-ui/themes';
 import { sendPasswordResetEmail, updateEmail, updateProfile } from 'firebase/auth';
 import React, { useEffect, useState } from 'react';
+import Swal from "sweetalert2";
 import { auth } from '../config/firebase-config';
 import useUserData from '../hooks/useUserData';
 import { UserService } from '../services/UserService';
@@ -53,13 +54,24 @@ const UserProfile: React.FC = () => {
       }
 
       setIsDialogOpen(false);
-      alert("Profile updated successfully!");
+      Swal.fire({
+        title: "Profile updated successfully!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
 
       // Refresh the page to show the updated data
       window.location.reload();
     } catch (error) {
       console.error("Error updating profile:", error);
-      alert("Failed to update profile.");
+      Swal.fire({
+        title: "Failed to update profile",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
+     
     }
   };
 
@@ -68,13 +80,30 @@ const UserProfile: React.FC = () => {
     if (currentUser?.email) {
       try {
         await sendPasswordResetEmail(auth, currentUser.email);
-        alert("Password reset email sent! Check your inbox.");
+        Swal.fire({
+          title: "Password reset email sent!",
+          icon: "success",
+          showConfirmButton: false,
+          timer: 1500,  
+        });
+        
       } catch (error) {
         console.error("Error sending password reset email:", error);
-        alert("Failed to send password reset email.");
+        Swal.fire({
+          title: "Failed to send password reset email!",
+          icon: "error",
+          showConfirmButton: false,
+          timer: 1500,  
+        });
+
       }
     } else {
-      alert("No user email found.");
+      Swal.fire({
+        title: "No user email found!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
     }
   };
 

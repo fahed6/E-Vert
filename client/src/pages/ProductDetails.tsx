@@ -9,6 +9,7 @@ import { Product } from "../types/Product";
 import ProductMultiCarousel from "../components/ProductCarousel/ProductMulti-Carousel";
 import { CartService } from "../services/CartService";
 import useUserData from "../hooks/useUserData";
+import Swal from "sweetalert2";
 
 const ProductDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>(); // Get the product ID from the URL
@@ -52,7 +53,13 @@ const ProductDetails: React.FC = () => {
     try {
       await cartService.addToCart(user.id, product.id, 1); // Add 1 item by default
       setCartError(null);
-      alert("Product added to cart!");
+      Swal.fire({
+        title: "Product added to cart!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
+
     } catch (error) {
       console.error("Failed to add product to cart:", error);
       setCartError("Failed to add product to cart. Please try again.");

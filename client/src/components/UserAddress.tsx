@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { AddressService } from "../services/AddressService";
-import useUserData from "../hooks/useUserData";
-import { Box as Boxi, Button, Card, Text, Dialog, Flex, DataList, Grid, TextField as RadixTextField } from "@radix-ui/themes";
 import { Edit } from "@mui/icons-material";
+import { Box as Boxi, Button, Card, DataList, Dialog, Flex, Grid, TextField as RadixTextField, Text } from "@radix-ui/themes";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import useUserData from "../hooks/useUserData";
+import { AddressService } from "../services/AddressService";
 
 const UserAddress: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -50,11 +51,23 @@ const UserAddress: React.FC = () => {
       await addressService.saveAddress(user.id, addressData);
 
       setIsDialogOpen(false);
-      alert("Address updated successfully!");
+      Swal.fire({
+        title: "Address updated successfully!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
+
       window.location.reload();
     } catch (error) {
       console.error("Error updating address:", error);
-      alert("Failed to update address.");
+      Swal.fire({
+        title: "Failed to update address",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,  
+      });
+     
     }
   };
 

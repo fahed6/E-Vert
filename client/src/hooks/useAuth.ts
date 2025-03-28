@@ -1,10 +1,10 @@
 import { signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // For popup alerts
+import Swal from "sweetalert2";
 import { apiCall } from "../config/api/apiCall"; // Import API call function
 import { auth, googleProvider } from "../config/firebase-config";
-import{checkUserStatus} from "../hooks/checkUserStatus"
+import { checkUserStatus } from "../hooks/checkUserStatus";
 
 const useAuth = () => {
   const [email, setEmail] = useState<string>("");
