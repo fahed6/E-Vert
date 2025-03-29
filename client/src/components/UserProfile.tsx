@@ -125,7 +125,10 @@ const UserProfile: React.FC = () => {
 
   return (
     <Boxi maxWidth="750px">
-    <Card >
+    <Card variant="ghost" style={{ 
+        boxShadow: '0 9px 20px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+        transition: 'box-shadow 0.3s ease-in-out', 
+      }}>
       <Flex justify="between" align="center">
        <Text size='6'> Personal Information</Text>
         <Button color='grass' onClick={() => setIsDialogOpen(true)}>

@@ -98,7 +98,10 @@ const UserOrders: React.FC = () => {
       <Heading size="6">Your Orders</Heading>
       
       {orders.map((order) => (
-        <Card key={order.id}>
+        <Card key={order.id}  style={{ 
+          boxShadow: '0 1px 20px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+          transition: 'box-shadow 0.3s ease-in-out',
+        }}>
           <Flex direction="column" gap="3">
             <Flex justify="between" align="center">
               <Text weight="bold">Order #{order.id}</Text>
