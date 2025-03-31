@@ -1,9 +1,10 @@
-import { Box as Boxi, Card, Flex, Grid, Text, Heading, Badge } from '@radix-ui/themes';
+import { Box } from '@mui/material';
+import { Badge, Box as Boxi, Card, Flex, Grid, Text } from '@radix-ui/themes';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
 import useUserData from '../hooks/useUserData';
 import { OrderService } from '../services/OrderService';
-import { Box } from '@mui/material';
-import { BounceLoader } from 'react-spinners';
 
 
 
@@ -38,6 +39,7 @@ const UserOrders: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const user = useUserData();
   const orderService = new OrderService();
+   const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -92,16 +94,17 @@ const UserOrders: React.FC = () => {
     );
   if (orders.length === 0) return <Boxi style={{ padding: '2rem' }}><Text>No orders found</Text></Boxi>;
 
+
   return (
-  <Boxi maxWidth="750px">
+  <Boxi maxWidth="750px" style={{padding:'20px'}}>
     <Flex direction="column" gap="4">
-      <Heading size="6">Your Orders</Heading>
+      
       
       {orders.map((order) => (
-        <Card key={order.id}  style={{ 
+        <Card key={order.id} variant="classic"  style={{ 
           boxShadow: '0 1px 20px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
           transition: 'box-shadow 0.3s ease-in-out',
-        }}>
+        }}onClick={() => navigate(`/orders/${order.id}`)}>
           <Flex direction="column" gap="3">
             <Flex justify="between" align="center">
               <Text weight="bold">Order #{order.id}</Text>

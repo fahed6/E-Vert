@@ -22,7 +22,7 @@ const useAuth = () => {
 
       const userExists = await checkUserStatus(userCredential.user.uid);
       if (userExists) {
-        navigate("/home");
+        navigate("/");
       }
     } catch (error: any) {
       console.error("Error signing in:", error.message);
@@ -66,12 +66,12 @@ const useAuth = () => {
 
         if (response) {
           console.log("New user added to the local database.");
-          navigate("/home");
+          navigate("/");
         } else {
           console.error("Error creating user in the database.");
         }
       } else {
-        navigate("/home");
+        navigate("/");
       }
     } catch (error: any) {
       console.error("Error signing in with Google:", error.message);

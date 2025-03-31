@@ -1,7 +1,7 @@
+import { Button, Flex, Link, Separator, Text, TextField } from '@radix-ui/themes';
 import React from 'react';
-import { Flex, Text, TextField, Button, Separator, Link } from '@radix-ui/themes';
-import useAuth from '../hooks/useAuth';
 import "../App.css";
+import useAuth from '../hooks/useAuth';
 
 
 
@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
       </Flex>
 
       <Text size="2">
-       Forget Your Password? <Link href="/password"> Change Password </Link>
+       Forget Your Password? <Link href="/change-password"> Change Password </Link>
       </Text>
 
       <Text size="2">

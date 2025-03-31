@@ -1,13 +1,9 @@
-import Box from "@mui/material/Box";
-import { useState } from "react";
-import { BsCart2 } from "react-icons/bs";
-import { HiOutlineBars3 } from "react-icons/hi2";
-import Logo from "/src/assets/e-vert_LOGO.png";
 import CommentRoundedIcon from "@mui/icons-material/CommentRounded";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import PhoneRoundedIcon from "@mui/icons-material/PhoneRounded";
 import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
+import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
 import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
@@ -15,11 +11,15 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import { Button } from '@radix-ui/themes';
 import { signOut } from "firebase/auth";
+import { useState } from "react";
+import { BsCart2 } from "react-icons/bs";
+import { HiOutlineBars3 } from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../config/firebase-config";
 import "./Header.css";
-import { Button } from '@radix-ui/themes';
+import Logo from "/src/assets/e-vert_LOGO.png";
 
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
@@ -30,7 +30,7 @@ const Header = () => {
     {
       text: "Home",
       icon: <HomeIcon />,
-      onClick: () => navigate("/home"),
+      onClick: () => navigate("/"),
     },
     {
       text: "About",
@@ -63,7 +63,7 @@ const Header = () => {
           {
             text: "Profile",
             icon: <ShoppingCartRoundedIcon />,
-            onClick: () => navigate("/dashboard"),
+            onClick: () => navigate("/profile"),
           },
         ]
       : []),
@@ -86,12 +86,12 @@ const Header = () => {
   return (
     <nav>
       <div className="nav-logo-container">
-        <a href="/home">
+        <a href="/">
           <img src={Logo} alt="Logo" style={{ height: "40px" }} />
         </a>
       </div>
       <div className="navbar-links-container">
-        <a href="/home">Home</a>
+        <a href="/">Home</a>
         <a href="/about">About</a>
         <a href="/contact">Contact</a>
         <a href="/Products">Products</a>
@@ -101,7 +101,7 @@ const Header = () => {
 
         {/* Conditionally render the Profile link based on authentication */}
         {isAuthenticated && (
-          <a href="/dashboard">
+          <a href="/profile">
             Profile
           </a>
         )}
