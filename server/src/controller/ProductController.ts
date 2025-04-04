@@ -31,8 +31,21 @@ export class ProductController {
     this.router.get("/:id", this.getProductById.bind(this));
     this.router.put("/:id", this.updateProduct.bind(this));
     this.router.delete("/:id", this.deleteProduct.bind(this));
+    this.router.get("/count/total", this.countProducts.bind(this));
   }
 
+  public async countProducts(req: Request, res: Response) {
+    try {
+      const count = await this.productService.countProducts();
+      res.status(200).json({ count });
+    } catch (error) {
+      console.error('Error in countProducts controller:', error);
+      res.status(500).json({ 
+        error: 'Failed to count products',
+
+      });
+    }
+  }
   /**
    * Create a new product
    */

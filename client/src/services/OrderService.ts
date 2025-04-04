@@ -32,6 +32,12 @@ export class OrderService  {
       "GET"
     );
   }
+  async count() {
+    return apiCall(
+      `${BASE_URL}/count/total`,
+      "GET"
+    );
+  }
 
   async getOrderById(orderId: number) {
     return apiCall(

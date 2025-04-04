@@ -14,6 +14,12 @@ export class UserService {
     this.userRepository = AppDataSource.getRepository(User);
     
   }
+  async countRegularUsers(): Promise<number> {
+    return this.userRepository.count({ where: { role: "user" } });
+  }
+  async countPartnerUsers(): Promise<number> {
+    return this.userRepository.count({ where: { role: "partner" } });
+  }
 
   async create(userData: Partial<User>): Promise<User> {
     const user = this.userRepository.create(userData);
@@ -46,6 +52,7 @@ export class UserService {
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
+
 
   async update(id: number, updateData: Partial<User>): Promise<User | null> {
     await this.userRepository.update(id, updateData);

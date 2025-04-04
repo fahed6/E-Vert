@@ -13,12 +13,13 @@ export class OrderController {
   }
 
   private initializeRoutes() {
-    this.router.post("/:userId/checkout", this.checkout.bind(this)); // Add userId to the route
-    this.router.get("/:userId/orders", this.getUserOrders.bind(this)); // Add userId to the route
-    this.router.get("/:id", this.getOrderById.bind(this)); // Get order by orderId
-    this.router.put("/:id/state", this.updateOrderState.bind(this)); // Update order state by orderId
+    this.router.post("/:userId/checkout", this.checkout.bind(this));
+    this.router.get("/:userId/orders", this.getUserOrders.bind(this));
+    this.router.get("/:id", this.getOrderById.bind(this));
+    this.router.put("/:id/state", this.updateOrderState.bind(this));
+    this.router.get("/count/total", this.getTotalOrderCount.bind(this)); // New route
   }
-
+  
   async checkout(req: Request, res: Response): Promise<void> {
     try {
       const userId = parseInt(req.params.userId);
@@ -29,7 +30,6 @@ export class OrderController {
         return;
       }
   
-      // Calculate amount in controller or get from frontend
       const order = await this.orderService.checkout({
         cartId,
         userId,
@@ -49,7 +49,7 @@ export class OrderController {
 
   async getUserOrders(req: Request, res: Response): Promise<void> {
     try {
-      const userId = parseInt(req.params.userId); // Get userId from route params
+      const userId = parseInt(req.params.userId);
       if (isNaN(userId)) {
         res.status(400).json({ message: "Invalid user ID" });
         return;
@@ -65,7 +65,7 @@ export class OrderController {
 
   async getOrderById(req: Request, res: Response): Promise<void> {
     try {
-      const orderId = parseInt(req.params.id); // Get orderId from route params
+      const orderId = parseInt(req.params.id);
       if (isNaN(orderId)) {
         res.status(400).json({ message: "Invalid order ID" });
         return;
@@ -74,7 +74,7 @@ export class OrderController {
       const order = await this.orderService.getOrderById(orderId);
       res.status(200).json(order);
     } catch (error) {
-      if (error=== "Order not found") {
+      if (error === "Order not found") {
         res.status(404).json({ message: error });
       } else {
         console.error("Get order by ID error:", error);
@@ -85,7 +85,7 @@ export class OrderController {
 
   async updateOrderState(req: Request, res: Response): Promise<void> {
     try {
-      const orderId = parseInt(req.params.id); // Get orderId from route params
+      const orderId = parseInt(req.params.id);
       const { state } = req.body;
 
       if (isNaN(orderId) || !state || !Object.values(OrderState).includes(state)) {
@@ -102,6 +102,18 @@ export class OrderController {
         console.error("Update order state error:", error);
         res.status(500).json({ message: "Internal server error" });
       }
+    }
+  }
+
+  async getTotalOrderCount(req: Request, res: Response): Promise<void> {
+    try {
+      const count = await this.orderService.getTotalOrderCount();
+      res.status(200).json({ count });
+    } catch (error) {
+      console.error("Get total order count error:", error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to get order count" 
+      });
     }
   }
 }

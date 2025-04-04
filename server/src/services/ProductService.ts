@@ -8,6 +8,13 @@ export class ProductService {
   private partnerRepository = AppDataSource.getRepository(Partner);
   private categoryRepository = AppDataSource.getRepository(Category);
 
+  async countProducts(): Promise<number> {
+  
+      const count = await this.productRepository.count();
+      return Number(count)// Ensure it's a valid number
+     
+  }
+
   async createProduct(productData: Partial<Product>): Promise<Product> {
     const { ownerId, categories = [], ...rest } = productData;
 

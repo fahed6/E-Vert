@@ -27,6 +27,9 @@ import PartnersContent from './PartnersContent';
 import ProductsContent from './ProductsContent';
 import OrdersContent from './OrdersContent';
 import SettingsContent from './SettingsContent';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../config/firebase-config';
+import { useNavigate } from 'react-router-dom';
 
 // Define types for menu items
 interface MenuItem {
@@ -39,6 +42,7 @@ const AdminDashboard: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
+    const navigate = useNavigate();
 
   const menuItems: MenuItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
@@ -75,6 +79,15 @@ const AdminDashboard: React.FC = () => {
         return <DashboardContent />;
     }
   };
+  const handleLogout = async () => {
+      try {
+        await signOut(auth); // Sign out the user
+        localStorage.removeItem("firebaseIdToken"); // Remove the token from localStorage
+        navigate("/login"); // Redirect to the login page
+      } catch (error) {
+        console.error("Error signing out:", error);
+      }
+    };
 
   return (
     <Theme appearance="light" accentColor="green">
@@ -129,7 +142,7 @@ const AdminDashboard: React.FC = () => {
             }}>
               <Flex align="center" gap="2">
                 <LogoutIcon />
-                {sidebarExpanded && <Text>Logout</Text>}
+                {sidebarExpanded && <Text onClick={handleLogout}>Logout</Text>}
               </Flex>
             </Button>
           </Flex>
@@ -181,7 +194,7 @@ const AdminDashboard: React.FC = () => {
               <Button variant="ghost" style={{ justifyContent: "flex-start", color: 'rgba(255, 255, 255, 0.7)' }}>
                 <Flex align="center" gap="2">
                   <LogoutIcon />
-                  <Text>Logout</Text>
+                  <Text onClick={handleLogout}>Logout</Text>
                 </Flex>
               </Button>
             </Flex>

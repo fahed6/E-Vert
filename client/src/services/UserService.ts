@@ -8,6 +8,13 @@ export class UserService {
   async activateUser(id: number) {
     return apiCall(`${BASE_URL}/${id}/activate`, 'PATCH');
   }
+  async countUsers() {
+    return apiCall(`${BASE_URL}/count/regular`, 'GET');
+  }
+
+  async countPartners() {
+    return apiCall(`${BASE_URL}/count/partners`, 'GET');
+  }
 
 
   async deactivateUser(id: number) {

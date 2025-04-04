@@ -113,4 +113,8 @@ export class OrderService {
     order.orderState = state;
     return this.orderRepository.save(order);
   }
+
+  async getTotalOrderCount(): Promise<number> {
+    return this.orderRepository.count();
+  }
 }

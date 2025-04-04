@@ -34,4 +34,7 @@ export class ProductService {
   async deleteProduct(id: number): Promise<void> {
     return apiCall(`${BASE_URL_PRODUCT}/${id}`, 'DELETE');
   }
+  async count() {
+    return apiCall(`${BASE_URL_PRODUCT}/count/total`, 'GET');
+  }
 }

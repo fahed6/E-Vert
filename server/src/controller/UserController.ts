@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { UserService } from '../services/userService';
 import { MailService } from '../services/MailService';
+import { UserService } from '../services/userService';
 
 
 export class UserController {
@@ -26,8 +26,30 @@ export class UserController {
     this.router.delete('/:id', this.delete.bind(this)); // not Protected
     this.router.patch("/:id/activate", this.activate.bind(this)); // Protected
     this.router.patch("/:id/deactivate", this.deactivate.bind(this));// not Protected
+    this.router.get('/count/regular', this.countRegularUsers.bind(this)); // New endpoint
+    this.router.get('/count/partners', this.countPartnerUsers.bind(this)); // New endpoint
+
   }
 
+
+  public async countRegularUsers(req: Request, res: Response) {
+    try {
+      const count = await this.userService.countRegularUsers();
+      res.json({ count });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
+
+  // Count partner users (role="partner")
+  public async countPartnerUsers(req: Request, res: Response) {
+    try {
+      const count = await this.userService.countPartnerUsers();
+      res.json({ count });
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  }
   public async activate(req: Request, res: Response) {
     try {
       const user = await this.userService.activate(Number(req.params.id));
