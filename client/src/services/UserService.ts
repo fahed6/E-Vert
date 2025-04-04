@@ -5,6 +5,21 @@ const BASE_URL = 'http://localhost:5000/user';
 
 export class UserService {
 
+  async setUserRole(uid: string) {
+    return apiCall(`${BASE_URL}/${uid}/set-user-role'`, 'PATCH');
+  } 
+   async setPartnerRole(uid: string) {
+    return apiCall(`${BASE_URL}/${uid}/set-partner-role`, 'PATCH');
+  }
+    async setAdminRole(uid: string) {
+    return apiCall(`${BASE_URL}/${uid}/set-admin-role`, 'PATCH');
+  }
+  async getPartnerUsers() {
+    return apiCall(`${BASE_URL}/partner/users`, 'GET');
+  }
+  async getRegularUsers() {
+    return apiCall(`${BASE_URL}/regular/users`, 'GET');
+  }
   async activateUser(id: number) {
     return apiCall(`${BASE_URL}/${id}/activate`, 'PATCH');
   }

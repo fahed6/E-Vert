@@ -17,6 +17,8 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import Profile from "./pages/Profile";
 import SignupPage from './pages/SignupPage';
+import AdminUserEdit from "./components/adminComponents/AdminUserEdit";
+import AdminUserOrders from "./components/adminComponents/AdminUserOrders";
 
 const App: React.FC = () => {
   return (
@@ -52,9 +54,13 @@ const App: React.FC = () => {
               element={
                 <AdminLayout>
                   <AdminDashboard />
+                  
                 </AdminLayout>
+                
               } 
             />
+            <Route path="/AdminDashboard/users/edit/:userId" element={<AdminLayout><AdminUserEdit /></AdminLayout>} />
+            <Route path="/AdminDashboard/users/orders/:userId" element={<AdminLayout><AdminUserOrders /></AdminLayout>} />
           </Route>
         </Routes>
       </Router>

@@ -14,6 +14,14 @@ export class UserService {
     this.userRepository = AppDataSource.getRepository(User);
     
   }
+
+
+  async findRegularUsers(): Promise<User[]> {
+    return this.userRepository.find({where:{role:"user"}});
+  }
+  async findPartnerUsers(): Promise<User[]> {
+    return this.userRepository.find({ where: { role: "partner" } });
+  }
   async countRegularUsers(): Promise<number> {
     return this.userRepository.count({ where: { role: "user" } });
   }

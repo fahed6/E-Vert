@@ -1,6 +1,9 @@
 import { Request, Response, Router } from 'express';
 import { MailService } from '../services/MailService';
 import { UserService } from '../services/userService';
+import { setUserRole } from '../middlewares/setUserRole';
+import { setPartnerRole } from '../middlewares/setPartner';
+import { setAdminRole } from '../middlewares/setAdmin';
 
 
 export class UserController {
@@ -28,10 +31,53 @@ export class UserController {
     this.router.patch("/:id/deactivate", this.deactivate.bind(this));// not Protected
     this.router.get('/count/regular', this.countRegularUsers.bind(this)); // New endpoint
     this.router.get('/count/partners', this.countPartnerUsers.bind(this)); // New endpoint
+    this.router.get('/regular/users', this.getRegularUsers.bind(this));
+    this.router.get('/partner/users', this.getPartnerUsers.bind(this));
+    this.router.patch('/:uid/set-user-role', this.setUserRole.bind(this));
+    this.router.patch('/:uid/set-partner-role', this.setPartnerRole.bind(this));
+    this.router.patch('/:uid/set-admin-role', this.setAdminRole.bind(this));
 
   }
+  public async setUserRole(req: Request, res: Response) { 
+     await setUserRole(req.params.uid); 
+     res.status(201).json("user role changed to user");
+  }
+  public async setPartnerRole(req: Request, res: Response) {
+    await setPartnerRole(req.params.uid);
+    res.status(201).json("user role changed to partner");
+  }
+  
+  public async setAdminRole(req: Request, res: Response) {
+     await setAdminRole(req.params.uid);
+   res.status(201).json("user role changed to admin");
+  }
 
-
+  public async getRegularUsers(req: Request, res: Response) {
+    try {
+      const users = await this.userService.findRegularUsers();
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching regular users:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch regular users',
+      
+      });
+    }
+  }
+  
+  // Get all partner users (role="partner")
+  public async getPartnerUsers(req: Request, res: Response) {
+    try {
+      const users = await this.userService.findPartnerUsers();
+      res.json(users);
+    } catch (error) {
+      console.error('Error fetching partner users:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch partner users',
+        
+      });
+    }
+  }
   public async countRegularUsers(req: Request, res: Response) {
     try {
       const count = await this.userService.countRegularUsers();
