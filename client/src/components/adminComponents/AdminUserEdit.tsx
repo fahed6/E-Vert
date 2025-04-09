@@ -288,7 +288,7 @@ const AdminUserEdit: React.FC = () => {
           <>
             <Button 
               size="1" 
-              color='blue' 
+              color='red' 
               variant="soft"
               onClick={() => handleRoleChange('partner')}
             >
@@ -296,7 +296,7 @@ const AdminUserEdit: React.FC = () => {
             </Button>
             <Button 
               size="1" 
-              color='purple' 
+              color='red' 
               variant="soft"
               onClick={() => handleRoleChange('admin')}
             >
@@ -308,7 +308,7 @@ const AdminUserEdit: React.FC = () => {
           <>
             <Button 
               size="1" 
-              color='blue' 
+              color='red' 
               variant="soft"
               onClick={() => handleRoleChange('user')}
             >
@@ -316,7 +316,7 @@ const AdminUserEdit: React.FC = () => {
             </Button>
             <Button 
               size="1" 
-              color='purple' 
+              color='red' 
               variant="soft"
               onClick={() => handleRoleChange('admin')}
             >
@@ -328,7 +328,7 @@ const AdminUserEdit: React.FC = () => {
           <>
             <Button 
               size="1" 
-              color='blue' 
+              color='red' 
               variant="soft"
               onClick={() => handleRoleChange('user')}
             >
@@ -336,7 +336,7 @@ const AdminUserEdit: React.FC = () => {
             </Button>
             <Button 
               size="1" 
-              color='blue' 
+              color='red' 
               variant="soft"
               onClick={() => handleRoleChange('partner')}
             >

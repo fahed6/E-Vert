@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import AppDataSource from "../data-source";
 import { Address } from "../entities/Address";
 import { Cart } from "../entities/Cart";
@@ -117,4 +118,38 @@ export class OrderService {
   async getTotalOrderCount(): Promise<number> {
     return this.orderRepository.count();
   }
+
+  // New method to get all orders with pagination and filtering
+  async getAllOrders({
+    page = 1,
+    limit = 10,
+    states = [],
+    userIds = []
+  }: {
+    page?: number;
+    limit?: number;
+    states?: OrderState[];
+    userIds?: number[];
+  } = {}): Promise<{ orders: Order[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+    
+    const where: any = {};
+    if (states.length > 0) {
+      where.orderState = In(states);
+    }
+    if (userIds.length > 0) {
+      where.user = { id: In(userIds) };
+    }
+
+    const [orders, totalCount] = await this.orderRepository.findAndCount({
+      where,
+      relations: ["user"],
+      order: { createdAt: "DESC" },
+      skip,
+      take: limit
+    });
+
+    return { orders, totalCount };
+  }
+
 }

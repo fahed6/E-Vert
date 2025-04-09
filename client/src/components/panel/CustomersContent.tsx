@@ -1,8 +1,11 @@
 // components/CustomersContent.tsx
+import { Box as Boxi } from '@mui/material';
+import { Badge, Box, Button, Card, Flex, Heading, Separator, Text } from '@radix-ui/themes';
 import React, { useEffect, useState } from 'react';
-import { Badge, Box, Button, Card, Flex, Heading, Separator, Text, Spinner } from '@radix-ui/themes';
-import { UserService } from '../../services/UserService';
 import { useNavigate } from 'react-router-dom';
+import { BounceLoader } from 'react-spinners';
+import { UserService } from '../../services/UserService';
+
 
 interface Customer {
   id: number;
@@ -73,9 +76,14 @@ const CustomersContent: React.FC = () => {
 
   if (loading) {
     return (
-      <Box style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-        <Spinner size="3" />
-      </Box>
+      <Boxi sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}>
+        <BounceLoader color="#4CAF50" size={35}/>
+      </Boxi>
     );
   }
 

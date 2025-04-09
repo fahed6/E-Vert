@@ -3,6 +3,9 @@ import '@radix-ui/themes/styles.css';
 import React from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import AddProductForm from './components/AddProductForm';
+import AdminProductsContent from "./components/adminComponents/adminProductsContent";
+import AdminUserEdit from "./components/adminComponents/AdminUserEdit";
+import AdminUserOrders from "./components/adminComponents/AdminUserOrders";
 import Layout from './components/Layout';
 import AdminDashboard from "./components/panel/AdminDashboard";
 import { AdminLayout } from "./components/panel/AdminLayout";
@@ -17,8 +20,7 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import Profile from "./pages/Profile";
 import SignupPage from './pages/SignupPage';
-import AdminUserEdit from "./components/adminComponents/AdminUserEdit";
-import AdminUserOrders from "./components/adminComponents/AdminUserOrders";
+import AdminOrderDetail from "./components/adminComponents/AdminOrderDetail";
 
 const App: React.FC = () => {
   return (
@@ -61,6 +63,9 @@ const App: React.FC = () => {
             />
             <Route path="/AdminDashboard/users/edit/:userId" element={<AdminLayout><AdminUserEdit /></AdminLayout>} />
             <Route path="/AdminDashboard/users/orders/:userId" element={<AdminLayout><AdminUserOrders /></AdminLayout>} />
+            <Route path="/AdminDashboard/partners/products/:ownerId" element={<AdminLayout><AdminProductsContent /></AdminLayout>} />
+            <Route path="/AdminDashboard/user/order/:orderId" element={<AdminLayout><AdminOrderDetail /></AdminLayout>} />
+
           </Route>
         </Routes>
       </Router>

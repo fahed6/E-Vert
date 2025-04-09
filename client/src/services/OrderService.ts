@@ -1,28 +1,54 @@
 // src/services/OrderService.ts
-
 import { apiCall } from "../config/api/apiCall";
 import { OrderState } from "../types/OrderState";
 import { PaymentMethod } from "../types/PaymentMethod";
- // Define these types as needed
 
 const BASE_URL = "http://localhost:5000/order";
 
 interface CheckoutData {
-  userId:number;
+  userId: number;
   cartId: number;
   addressId: number;
   paymentMethod: PaymentMethod;
   amount: number;
 }
 
-export class OrderService  {
+interface PaginationParams {
+  page?: number;
+  limit?: number;
+  states?: OrderState[];
+  userIds?: number[];
+}
+
+interface PaginatedResponse<T> {
+  data: T;
+  pagination: {
+    page: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+  };
+}
+
+export class OrderService {
+  async getAllOrders(params?: PaginationParams): Promise<PaginatedResponse<any>> {
+    const queryParams = new URLSearchParams();
+    
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.states) queryParams.append('states', params.states.join(','));
+    if (params?.userIds) queryParams.append('userIds', params.userIds.join(','));
+
+    const url = `${BASE_URL}/?${queryParams.toString()}`;
+    return apiCall(url, "GET");
+  }
+
   async checkout(userId: number, data: CheckoutData) {
-    // Remove userId from the data being sent
     const { userId: _, ...requestData } = data;
     return apiCall(
       `${BASE_URL}/${userId}/checkout`,
       "POST",
-      requestData // Send only the necessary data
+      requestData
     );
   }
 
@@ -32,6 +58,7 @@ export class OrderService  {
       "GET"
     );
   }
+
   async count() {
     return apiCall(
       `${BASE_URL}/count/total`,
@@ -53,4 +80,4 @@ export class OrderService  {
       { state }
     );
   }
-};
+}

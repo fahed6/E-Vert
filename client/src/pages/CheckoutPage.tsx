@@ -53,6 +53,7 @@ const CheckoutPage: React.FC = () => {
           // Fetch user address
           const userAddress = await addressService.getAddressByUserId(user.id);
           setAddress(userAddress);
+         
         } catch (err) {
           console.error('Checkout fetch error:', err);
           setError('Failed to load checkout information');
@@ -195,7 +196,10 @@ const CheckoutPage: React.FC = () => {
           <Heading size="4" mb="3">Delivery Address</Heading>
           {address ? (
             <Text>
-              {address.street}
+              State: {address.State}<br></br>
+              City: {address.City}<br></br>
+              Street: {address.StreetAddress}<br></br>
+              Code Post: {address.CodePost}
             </Text>
           ) : (
             <Text color="red">No address found. Please add an address.</Text>

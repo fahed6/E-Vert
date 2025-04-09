@@ -1,11 +1,12 @@
 // src/components/OrderDetail.tsx
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Box } from '@mui/material';
-import { Badge, Box as Boxi, Button, Card, Flex, Grid, Text } from '@radix-ui/themes';
+import { Badge, Box as Boxi, Button, Card, Flex, Grid, Heading, Text } from '@radix-ui/themes';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BounceLoader } from 'react-spinners';
 import { OrderService } from '../services/OrderService';
+import { Address } from '../types/Address';
 
 interface OrderItem {
   name: string;
@@ -24,6 +25,7 @@ interface Order {
     items: OrderItem[];
     total: number;
   } | null;
+  address: Address
 }
 
 const ORDER_STATES = {
@@ -40,13 +42,16 @@ const OrderDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const orderService = new OrderService();
 
+
+
   useEffect(() => {
     const fetchOrder = async () => {
       try {
         if (!orderId) return;
-        
+  
         const orderData = await orderService.getOrderById(parseInt(orderId));
         setOrder(orderData);
+
       } catch (err) {
         console.error("Error fetching order:", err);
         setError("Failed to load order details");
@@ -54,7 +59,7 @@ const OrderDetail: React.FC = () => {
         setLoading(false);
       }
     };
-
+  
     fetchOrder();
   }, [orderId]);
 
@@ -153,6 +158,19 @@ const OrderDetail: React.FC = () => {
               )) || <Text color="gray">No items available</Text>}
             </Flex>
           </Flex>
+        </Card>
+        <Card>
+          <Heading size="4" mb="3">Delivery Address</Heading>
+          {order.address ? (
+            <Text>
+            State: {order.address.State}<br />
+            City: {order.address.City}<br />
+            Street: {order.address.StreetAddress}<br />
+            Code Post: {order.address.CodePost}
+          </Text>
+          ) : (
+            <Text color="red">No address found. Please add an address.</Text>
+          )}
         </Card>
       </Flex>
     </Boxi>

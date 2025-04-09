@@ -13,12 +13,14 @@ export class OrderController {
   }
 
   private initializeRoutes() {
+    this.router.get("/", this.getAllOrders.bind(this));
     this.router.post("/:userId/checkout", this.checkout.bind(this));
     this.router.get("/:userId/orders", this.getUserOrders.bind(this));
     this.router.get("/:id", this.getOrderById.bind(this));
     this.router.put("/:id/state", this.updateOrderState.bind(this));
     this.router.get("/count/total", this.getTotalOrderCount.bind(this)); // New route
   }
+
   
   async checkout(req: Request, res: Response): Promise<void> {
     try {
@@ -116,4 +118,34 @@ export class OrderController {
       });
     }
   }
+  async getAllOrders(
+    req: Request<{}, {}, {}, { page?: string; limit?: string }>,
+    res: Response
+  ): Promise<void> {
+    try {
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || 10;
+      
+      const result = await this.orderService.getAllOrders({ page, limit });
+      
+      res.status(200).json({
+        success: true,
+        data: result.orders,
+        pagination: {
+          page,
+          limit,
+          totalCount: result.totalCount,
+          totalPages: Math.ceil(result.totalCount / limit)
+        }
+      });
+    } catch (error: any) {
+      console.error("Get all orders error:", error);
+      res.status(500).json({ 
+        success: false,
+        error: error.message || "Failed to fetch orders"
+      });
+    }
+  }
+
+  
 }
