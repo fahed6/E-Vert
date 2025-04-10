@@ -2,7 +2,6 @@ import { Theme } from "@radix-ui/themes";
 import '@radix-ui/themes/styles.css';
 import React from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import AddProductForm from './components/AddProductForm';
 import AdminProductsContent from "./components/adminComponents/adminProductsContent";
 import AdminUserEdit from "./components/adminComponents/AdminUserEdit";
 import AdminUserOrders from "./components/adminComponents/AdminUserOrders";
@@ -21,6 +20,7 @@ import ProductPage from "./pages/ProductPage";
 import Profile from "./pages/Profile";
 import SignupPage from './pages/SignupPage';
 import AdminOrderDetail from "./components/adminComponents/AdminOrderDetail";
+import PartnerDashboard from "./components/panel/partner/PartnerDashboard";
 
 const App: React.FC = () => {
   return (
@@ -45,7 +45,6 @@ const App: React.FC = () => {
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/orders/:orderId" element={<OrderDetail />} />
               
-              <Route path="/add-product" element={<AddProductForm />} />
             </Route>
           </Route>
           
@@ -66,6 +65,7 @@ const App: React.FC = () => {
             <Route path="/AdminDashboard/partners/products/:ownerId" element={<AdminLayout><AdminProductsContent /></AdminLayout>} />
             <Route path="/AdminDashboard/user/order/:orderId" element={<AdminLayout><AdminOrderDetail /></AdminLayout>} />
 
+            <Route path="/PartnerDashboard" element={<AdminLayout><PartnerDashboard /></AdminLayout>} /> 
           </Route>
         </Routes>
       </Router>

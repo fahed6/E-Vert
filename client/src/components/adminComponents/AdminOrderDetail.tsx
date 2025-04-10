@@ -132,7 +132,7 @@ const AdminOrderDetail: React.FC = () => {
     <Boxi maxWidth="850px" style={{ padding: '1rem' }}>
       <Button
         variant="soft"
-        onClick={() => navigate('/AdminDashboard')}
+        onClick={() => navigate(-1)}
         style={{
           position: 'absolute',
           top: '20px',

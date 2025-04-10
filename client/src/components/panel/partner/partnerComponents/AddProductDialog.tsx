@@ -1,95 +1,86 @@
-import { Box, Button, Card, Flex, Text, TextArea, TextField } from "@radix-ui/themes";
+import { Box, Button, Dialog, Flex, Text, TextArea, TextField } from "@radix-ui/themes";
 import React, { useEffect, useState } from "react";
-import useUserData from "../hooks/useUserData";
-import { CategoryService } from "../services/CategoryService";
-import { ProductService } from "../services/ProductService";
-import { Product } from "../types/Product";
+import { Product } from "../../../../types/Product";
+import { ProductService } from "../../../../services/ProductService";
+import { CategoryService } from "../../../../services/CategoryService";
+import useUserData from "../../../../hooks/useUserData";
+import Swal from "sweetalert2";
 
-const AddProductForm: React.FC = () => {
+
+const AddProductDialog: React.FC = () => {
+  const [open, setOpen] = useState(false);
   const [product, setProduct] = useState<Partial<Product>>({
     name: "",
     description: "",
-    categories: [], // Updated to support multiple categories
+    categories: [],
     stock: 0,
     price: 0,
     image: null,
-    ownerId: 0, // This will be updated with the user ID
+    ownerId: 0,
   });
 
-  const [categories, setCategories] = useState<string[]>([]); // List of available categories
+  const [categories, setCategories] = useState<string[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const productService = new ProductService();
   const categoryService = new CategoryService();
-
-  // Call the hook at the top level
   const user = useUserData();
 
-  // Fetch categories when the component mounts
   useEffect(() => {
+    if (!open) return;
+    
     const fetchCategories = async () => {
       try {
         const data = await categoryService.getAllCategories();
-        setCategories(data.map((category: { name: any; }) => category.name)); // Extract category names
+        setCategories(data.map((category: { name: any }) => category.name));
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
     };
 
     fetchCategories();
-  }, []);
+  }, [open]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setProduct({
-      ...product,
-      [name]: value,
-    });
+    setProduct({ ...product, [name]: value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setProduct({
-        ...product,
-        image: file, // Store the file object
-      });
+    if (e.target.files?.[0]) {
+      setProduct({ ...product, image: e.target.files[0] });
     }
   };
 
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
-    setProduct((prevProduct) => {
-      const updatedCategories = checked
-        ? [...prevProduct.categories!, value] // Add category if checked
-        : prevProduct.categories!.filter((category) => category !== value); // Remove category if unchecked
-      return {
-        ...prevProduct,
-        categories: updatedCategories,
-      };
-    });
+    setProduct(prev => ({
+      ...prev,
+      categories: checked
+        ? [...(prev.categories || []), value]
+        : prev.categories?.filter(c => c !== value) || []
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Create a FormData object
       const formData = new FormData();
       formData.append("name", product.name || "");
       formData.append("description", product.description || "");
       formData.append("stock", String(product.stock));
       formData.append("price", String(product.price));
-      formData.append("ownerId", String(user.id));
-      if (product.image) {
-        formData.append("image", product.image); // Append the file
-      }
-      // Append categories as a JSON string
+      formData.append("ownerId", String(user?.id));
+      if (product.image) formData.append("image", product.image);
       formData.append("categories", JSON.stringify(product.categories));
 
-      // Send the FormData to the backend
-      const newProduct = await productService.createProduct(formData);
-      setMessage(`Product "${newProduct.name}" created successfully!`);
+      await productService.createProduct(formData);
+      setMessage("Product created successfully!");
+      Swal.fire({
+        title: "Product created successfully!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500,  })
+        
       setProduct({
         name: "",
         description: "",
@@ -97,21 +88,28 @@ const AddProductForm: React.FC = () => {
         stock: 0,
         price: 0,
         image: null,
-        ownerId: 0, // Reset ownerId
+        ownerId: 0,
       });
+      setTimeout(() => setOpen(false), 1500);
     } catch (error) {
       setMessage("Failed to create product. Please try again.");
-      console.error(error);
+      Swal.fire({
+        title: "Failed to create product",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,})
     }
   };
 
   return (
-    <Box maxWidth="750px">
-      <Card>
-        <Flex justify="between" align="center">
-          <Text size="6">Add Product</Text>
-        </Flex>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger>
+        <Button>Add New Product</Button>
+      </Dialog.Trigger>
 
+      <Dialog.Content style={{ maxWidth: 750 }}>
+        <Dialog.Title>Add New Product</Dialog.Title>
+        
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="3">
             <Box>
@@ -133,7 +131,6 @@ const AddProductForm: React.FC = () => {
               </Text>
               <TextArea
                 placeholder="Product Description..."
-                radius="full"
                 name="description"
                 value={product.description}
                 onChange={handleInputChange}
@@ -146,7 +143,7 @@ const AddProductForm: React.FC = () => {
                 Categories:
               </Text>
               <Flex direction="column" gap="2">
-                {categories.map((category) => (
+                {categories.map(category => (
                   <label key={category}>
                     <Flex align="center" gap="2">
                       <input
@@ -196,19 +193,25 @@ const AddProductForm: React.FC = () => {
               <input type="file" name="image" onChange={handleFileChange} />
             </Box>
 
-            <Flex gap="3" justify="end">
+            <Flex gap="3" justify="end" mt="4">
+              <Dialog.Close>
+                <Button variant="soft" color="gray">
+                  Cancel
+                </Button>
+              </Dialog.Close>
               <Button type="submit">Add Product</Button>
             </Flex>
           </Flex>
         </form>
+
         {message && (
           <Text color={message.includes("successfully") ? "green" : "red"} mt="3">
             {message}
           </Text>
         )}
-      </Card>
-    </Box>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 };
 
-export default AddProductForm;
+export default AddProductDialog;

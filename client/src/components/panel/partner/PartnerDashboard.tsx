@@ -1,11 +1,10 @@
 // AdminDashboard.tsx
 import {
-    People as CustomersIcon,
     Dashboard as DashboardIcon,
     Logout as LogoutIcon,
     Menu as MenuIcon,
     ShoppingCart as OrdersIcon,
-    Groups as PartnersIcon,
+    Inventory as ProductsIcon,
     Settings as SettingsIcon,
     Close as CloseIcon,
     ChevronLeft as CollapseIcon,
@@ -20,14 +19,13 @@ import {
     Text
 } from '@radix-ui/themes';
 import React, { useState } from 'react';
-import DashboardContent from './DashboardContent';
-import CustomersContent from './CustomersContent';
-import PartnersContent from './PartnersContent';
-import OrdersContent from './OrdersContent';
-import UserProfile from '../UserProfile';
+import PartnerDashboardContent from './PartnerDashboardContent';
+import ProductsContent from './ProductsContent';
+import OrdersContent from '../OrdersContent';
+import UserProfile from '../../UserProfile';
 import { signOut } from 'firebase/auth';
-import { auth } from '../../config/firebase-config';
 import { useNavigate } from 'react-router-dom';
+import { auth } from '../../../config/firebase-config';
 
 // Define types for menu items
 interface MenuItem {
@@ -36,7 +34,7 @@ interface MenuItem {
   icon: React.ReactNode;
 }
 
-const AdminDashboard: React.FC = () => {
+const PartnerDashboard: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<string>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [sidebarExpanded, setSidebarExpanded] = useState<boolean>(true);
@@ -44,8 +42,7 @@ const AdminDashboard: React.FC = () => {
 
   const menuItems: MenuItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
-    { id: 'customers', label: 'Customers', icon: <CustomersIcon /> },
-    { id: 'partners', label: 'Partners', icon: <PartnersIcon /> },
+    { id: 'products', label: 'Products', icon: <ProductsIcon /> },
     { id: 'orders', label: 'Orders', icon: <OrdersIcon /> },
     { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
   ];
@@ -61,18 +58,15 @@ const AdminDashboard: React.FC = () => {
   const renderContent = (): React.ReactNode => {
     switch (activeMenu) {
       case 'dashboard':
-        return <DashboardContent />;
-      case 'customers':
-        return <CustomersContent />;
-      case 'partners':
-        return <PartnersContent />;
-     
+        return <PartnerDashboardContent />;
+      case 'products':
+        return <ProductsContent />;
       case 'orders':
         return <OrdersContent />;
       case 'settings':
         return <UserProfile />;
       default:
-        return <DashboardContent />;
+        return <PartnerDashboardContent />;
     }
   };
   const handleLogout = async () => {
@@ -101,7 +95,7 @@ const AdminDashboard: React.FC = () => {
           <Flex direction="column" gap="6" height="100%">
             {sidebarExpanded ? (
               <Flex justify="between" align="center">
-                <Heading style={{color:"white"}} size="6">Admin Panel</Heading>
+                <Heading style={{color:"white"}} size="6">Partner Panel</Heading>
                 <Button variant="ghost" onClick={toggleSidebar} style={{ color: 'white', padding: '4px' }}>
                   <CollapseIcon />
                 </Button>
@@ -227,4 +221,4 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-export default AdminDashboard;
+export default PartnerDashboard;
