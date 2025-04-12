@@ -6,6 +6,7 @@ import { Product } from '../../../types/Product';
 import { PartnerService } from '../../../services/PartnerService';
 import useUserData from '../../../hooks/useUserData';
 import AddProductDialog from './partnerComponents/AddProductDialog';
+import UpdateProductDialog from './partnerComponents/UpdateProductDialog';
 
 const ProductsContent: React.FC = () => {
   const user = useUserData();
@@ -104,45 +105,52 @@ const ProductsContent: React.FC = () => {
         {products.length > 0 ? (
           products.map((product) => (
             <Card key={product.id}>
-              <Flex direction="column" gap="2">
+            <Flex direction="column" gap="2">
               <Box 
-  height="120px" 
-  position="relative"
-  overflow="hidden"
-  style={{ borderRadius: "var(--radius-2)" }}
->
-  {product.image ? (
-    <img
-      src={`http://localhost:5000/${product.image}`}
-      alt={product.name}
-      style={{
-        width: '100%',
-        height: '100%',
-        objectFit: 'cover',
-        objectPosition: 'center'
-      }}
-    />
-  ) : (
-    <Box 
-      width="100%" 
-      height="100%" 
-      style={{ backgroundColor: "gray" }}
-    />
-  )}
-</Box>
-                <Text weight="bold">{product.name}</Text>
-                <Flex justify="between" align="center">
-                  <Text>{formatPrice(product.price)}</Text>
-                  <Badge>
-                    {getStockStatus(product.stock).label}
-                  </Badge>
-                </Flex>
-                <Flex gap="2" mt="2">
-                  <Button variant="soft" size="1">Edit</Button>
-                  <Button variant="soft" size="1" color="red">Delete</Button>
-                </Flex>
+                height="120px" 
+                position="relative"
+                overflow="hidden"
+                style={{ borderRadius: "var(--radius-2)" }}
+              >
+                {product.image ? (
+                  <img
+                    src={`http://localhost:5000/${product.image}`}
+                    alt={product.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                  />
+                ) : (
+                  <Box 
+                    width="100%" 
+                    height="100%" 
+                    style={{ backgroundColor: "gray" }}
+                  />
+                )}
+              </Box>
+              <Text weight="bold">{product.name}</Text>
+              <Flex justify="between" align="center">
+                <Text>{formatPrice(product.price)}</Text>
+                <Badge>
+                  {getStockStatus(product.stock).label}
+                </Badge>
               </Flex>
-            </Card>
+              <Flex gap="2" mt="2">
+                <UpdateProductDialog 
+                  product={product}
+                  onProductUpdated={(updatedProduct) => {
+                    setProducts(products.map(p => 
+                      p.id === updatedProduct.id ? updatedProduct : p
+                    ));
+                  }}
+                />
+                <Button variant="soft" size="1" color="red">Delete</Button>
+              </Flex>
+            </Flex>
+          </Card>
           ))
         ) : (
           <Text align="center">No products found</Text>

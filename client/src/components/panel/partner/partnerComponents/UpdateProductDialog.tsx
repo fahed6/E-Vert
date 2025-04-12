@@ -3,70 +3,63 @@ import React, { useEffect, useState } from "react";
 import { Product } from "../../../../types/Product";
 import { ProductService } from "../../../../services/ProductService";
 import { CategoryService } from "../../../../services/CategoryService";
-import useUserData from "../../../../hooks/useUserData";
 import Swal from "sweetalert2";
 import { Category } from "../../../../types/Category";
 
-const AddProductDialog: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const [product, setProduct] = useState<Partial<Product>>({
-    name: "",
-    description: "",
-    categories: [],
-    stock: 0,
-    price: 0,
-    image: null,
-    ownerId: 0,
-  });
+interface UpdateProductDialogProps {
+  product: Product;
+  onProductUpdated: (updatedProduct: Product) => void;
+}
 
+const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({ 
+  product: initialProduct, 
+  onProductUpdated 
+}) => {
+  const [open, setOpen] = useState(false);
+  const [currentProduct, setCurrentProduct] = useState<Product>(initialProduct);
   const [availableCategories, setAvailableCategories] = useState<Category[]>([]);
-  const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const productService = new ProductService();
   const categoryService = new CategoryService();
-  const user = useUserData();
 
-  // Get current category names for easier comparison
-  const currentCategoryNames = product.categories?.map(c => 
+  // Normalize categories to string names for easier comparison
+  const currentCategoryNames = currentProduct.categories?.map(c => 
     typeof c === 'string' ? c : c.name
   ) || [];
 
   useEffect(() => {
     if (!open) return;
-    
+
+    // Reset form when dialog opens
+    setCurrentProduct(initialProduct);
+
     const fetchCategories = async () => {
       try {
         setIsLoading(true);
-        const data = await categoryService.getAllCategories();
-        setAvailableCategories(data);
+        const categories = await categoryService.getAllCategories();
+        setAvailableCategories(categories);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
-        setMessage("Failed to load categories");
+        Swal.fire("Error", "Failed to load categories", "error");
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchCategories();
-  }, [open]);
+  }, [open, initialProduct]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setProduct(prev => ({
+    setCurrentProduct(prev => ({
       ...prev,
       [name]: name === 'stock' || name === 'price' ? Number(value) : value
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setProduct(prev => ({ ...prev, image: e.target.files![0] }));
-    }
-  };
-
   const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
-    setProduct(prev => {
+    setCurrentProduct(prev => {
       const currentNames = prev.categories?.map(c => 
         typeof c === 'string' ? c : c.name
       ) || [];
@@ -77,7 +70,7 @@ const AddProductDialog: React.FC = () => {
 
       return {
         ...prev,
-        categories: newNames // Store as string names (will be converted to Category objects in backend)
+        categories: newNames // Store as string names for FormData
       };
     });
   };
@@ -85,68 +78,58 @@ const AddProductDialog: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      if (!user?.id) {
-        throw new Error("User not authenticated");
-      }
-
       const formData = new FormData();
-      formData.append("name", product.name || "");
-      formData.append("description", product.description || "");
-      formData.append("stock", String(product.stock || 0));
-      formData.append("price", String(product.price || 0));
-      formData.append("ownerId", String(user.id));
       
-      // Append image if exists
-      if (product.image) {
-        formData.append("image", product.image);
-      }
+      // Append all fields
+      formData.append('name', currentProduct.name);
+      formData.append('description', currentProduct.description);
+      formData.append('stock', currentProduct.stock.toString());
+      formData.append('price', currentProduct.price.toString());
       
-      // Stringify category names
-      formData.append("categories", JSON.stringify(
-        product.categories?.map(c => typeof c === 'string' ? c : c.name) || []
+      // Ensure categories are sent as JSON array of strings
+      formData.append('categories', JSON.stringify(
+        currentProduct.categories?.map(c => typeof c === 'string' ? c : c.name) || []
       ));
-
-      setIsLoading(true);
-      await productService.createProduct(formData);
       
+      // Handle image upload
+      if (currentProduct.image instanceof File) {
+        formData.append('image', currentProduct.image);
+      } else if (currentProduct.image === null) {
+        // Explicitly handle image removal if needed
+        formData.append('image', '');
+      }
+
+      const updatedProduct = await productService.updateProduct(
+        currentProduct.id,
+        formData
+      );
+
+      onProductUpdated(updatedProduct);
       Swal.fire({
         title: "Success!",
-        text: "Product created successfully",
+        text: "Product updated successfully",
         icon: "success",
-        timer: 1500,
-      });
-
-      // Reset form
-      setProduct({
-        name: "",
-        description: "",
-        categories: [],
-        stock: 0,
-        price: 0,
-        image: null,
-        ownerId: 0,
+        timer: 1500
       });
       setOpen(false);
     } catch (error) {
-      console.error("Create product error:", error);
+      console.error("Update failed:", error);
       Swal.fire({
         title: "Error!",
-        text: "Failed to create product",
-        icon: "error",
+        text: "Failed to update product",
+        icon: "error"
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <Button>Add New Product</Button>
+        <Button variant="soft" size="1">Edit</Button>
       </Dialog.Trigger>
 
       <Dialog.Content style={{ maxWidth: 750 }}>
-        <Dialog.Title>Add New Product</Dialog.Title>
+        <Dialog.Title>Update Product</Dialog.Title>
         
         <form onSubmit={handleSubmit}>
           <Flex direction="column" gap="3">
@@ -156,9 +139,8 @@ const AddProductDialog: React.FC = () => {
                 Name:
               </Text>
               <TextField.Root
-                placeholder="Product Name..."
                 name="name"
-                value={product.name}
+                value={currentProduct.name}
                 onChange={handleInputChange}
                 required
               />
@@ -170,9 +152,8 @@ const AddProductDialog: React.FC = () => {
                 Description:
               </Text>
               <TextArea
-                placeholder="Product Description..."
                 name="description"
-                value={product.description}
+                value={currentProduct.description}
                 onChange={handleInputChange}
                 required
               />
@@ -212,7 +193,7 @@ const AddProductDialog: React.FC = () => {
               <TextField.Root
                 type="number"
                 name="stock"
-                value={product.stock || 0}
+                value={currentProduct.stock}
                 onChange={handleInputChange}
                 min="0"
                 required
@@ -227,7 +208,7 @@ const AddProductDialog: React.FC = () => {
               <TextField.Root
                 type="number"
                 name="price"
-                value={product.price || 0}
+                value={currentProduct.price}
                 onChange={handleInputChange}
                 step="0.01"
                 min="0"
@@ -238,37 +219,48 @@ const AddProductDialog: React.FC = () => {
             {/* Image Field */}
             <Box>
               <Text as="label" size="2" weight="bold">
-                Image:
+                Current Image:
               </Text>
+              {currentProduct.image && typeof currentProduct.image === 'string' && (
+                <img 
+                  src={`http://localhost:5000/${currentProduct.image}`} 
+                  alt="Product" 
+                  style={{ 
+                    maxWidth: '100%', 
+                    maxHeight: '120px',
+                    borderRadius: 'var(--radius-2)',
+                    marginBottom: '1rem'
+                  }}
+                />
+              )}
               <input 
                 type="file" 
                 accept="image/*"
-                onChange={handleFileChange} 
+                onChange={(e) => {
+                  if (e.target.files?.[0]) {
+                    setCurrentProduct(prev => ({
+                      ...prev,
+                      image: e.target.files![0]
+                    }));
+                  }
+                }}
               />
             </Box>
 
             {/* Form Actions */}
             <Flex gap="3" justify="end" mt="4">
               <Dialog.Close>
-                <Button variant="soft" color="gray">
-                  Cancel
-                </Button>
+                <Button variant="soft" color="gray">Cancel</Button>
               </Dialog.Close>
               <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Creating..." : "Add Product"}
+                {isLoading ? "Updating..." : "Update Product"}
               </Button>
             </Flex>
           </Flex>
         </form>
-
-        {message && (
-          <Text color={message.includes("success") ? "green" : "red"} mt="3">
-            {message}
-          </Text>
-        )}
       </Dialog.Content>
     </Dialog.Root>
   );
 };
 
-export default AddProductDialog;
+export default UpdateProductDialog;

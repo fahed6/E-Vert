@@ -26,10 +26,19 @@ export class ProductService {
   }
 
   // Update a product
-  async updateProduct(id: number, productData: Partial<Product>): Promise<Product> {
-    return apiCall(`${BASE_URL_PRODUCT}/${id}`, 'PUT', productData);
+  async updateProduct(id: number, data: Partial<Product> | FormData): Promise<Product> {
+    // If data is FormData, let the browser set the Content-Type header
+    if (data instanceof FormData) {
+      return apiCall(`${BASE_URL_PRODUCT}/${id}`, 'PUT', data);
+    }
+    
+    // For regular JSON data
+    return apiCall(`${BASE_URL_PRODUCT}/${id}`, 'PUT', data, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }
-
   // Delete a product
   async deleteProduct(id: number): Promise<void> {
     return apiCall(`${BASE_URL_PRODUCT}/${id}`, 'DELETE');
