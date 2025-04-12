@@ -106,18 +106,20 @@ const UpdateProductDialog: React.FC<UpdateProductDialogProps> = ({
 
       onProductUpdated(updatedProduct);
       Swal.fire({
-        title: "Success!",
-        text: "Product updated successfully",
+        title: "Product updated successfully!",
         icon: "success",
-        timer: 1500
+        showConfirmButton: false,
+          timer: 1500, 
       });
       setOpen(false);
     } catch (error) {
       console.error("Update failed:", error);
       Swal.fire({
-        title: "Error!",
-        text: "Failed to update product",
-        icon: "error"
+        title: "Failed to update product!",
+        icon: "error",
+        showConfirmButton: false,
+          timer: 1500, 
+ 
       });
     }
   };

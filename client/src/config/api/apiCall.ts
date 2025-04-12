@@ -10,21 +10,33 @@ export const apiCall = async (
     // If data is FormData, don't set Content-Type header
     if (data instanceof FormData) {
       delete headers["Content-Type"];
-    } else {
+    } else if (method !== 'GET' && method !== 'DELETE') {
       headers["Content-Type"] = "application/json";
     }
 
     const response = await fetch(url, {
       method,
       headers,
-      body: data instanceof FormData ? data : JSON.stringify(data),
+      body: method !== 'GET' && method !== 'DELETE' 
+        ? (data instanceof FormData ? data : JSON.stringify(data))
+        : undefined,
     });
+
+    // Handle empty responses for DELETE requests
+    if (method === 'DELETE' && response.status === 204) {
+      return null;
+    }
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return await response.json();
+    // Only try to parse JSON if there's content
+    const contentLength = response.headers.get('Content-Length');
+    if (contentLength && parseInt(contentLength) > 0) {
+      return await response.json();
+    }
+    return null;
   } catch (error) {
     console.error("Error in apiCall:", error);
     throw error;

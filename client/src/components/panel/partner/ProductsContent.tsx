@@ -7,6 +7,8 @@ import { PartnerService } from '../../../services/PartnerService';
 import useUserData from '../../../hooks/useUserData';
 import AddProductDialog from './partnerComponents/AddProductDialog';
 import UpdateProductDialog from './partnerComponents/UpdateProductDialog';
+import { ProductService } from '../../../services/ProductService';
+import Swal from 'sweetalert2';
 
 const ProductsContent: React.FC = () => {
   const user = useUserData();
@@ -16,10 +18,12 @@ const ProductsContent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
   
   const ownerId = user?.id;
   const itemsPerPage = 6;
   const partnerService = new PartnerService();
+  const productService = new ProductService();
 
   useEffect(() => {
     // Only run when we have a valid ownerId
@@ -47,6 +51,45 @@ const ProductsContent: React.FC = () => {
 
     fetchProducts();
   }, [ownerId, currentPage]);
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      setIsDeleting(id);
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+  
+      if (result.isConfirmed) {
+        await productService.deleteProduct(id);
+        setProducts(products.filter(product => product.id !== id));
+        setTotalCount(prev => prev - 1);
+        
+        Swal.fire(
+          {
+            title: "Deleted!",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1500, 
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      Swal.fire({
+        title: "Failed to delete product.",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500, 
+      });
+    } finally {
+      setIsDeleting(null);
+    }
+  };
 
   const getStockStatus = (stock: number) => {
     if (stock > 10) return { label: 'In Stock', color: 'green' };
@@ -147,7 +190,15 @@ const ProductsContent: React.FC = () => {
                     ));
                   }}
                 />
-                <Button variant="soft" size="1" color="red">Delete</Button>
+               <Button 
+                    variant="soft" 
+                    size="1" 
+                    color="red"
+                    onClick={() => handleDeleteProduct(product.id)}
+                    disabled={isDeleting === product.id}
+                  >
+                    {isDeleting === product.id ? 'Deleting...' : 'Delete'}
+                  </Button>
               </Flex>
             </Flex>
           </Card>

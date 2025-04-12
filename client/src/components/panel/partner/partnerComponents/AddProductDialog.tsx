@@ -110,10 +110,10 @@ const AddProductDialog: React.FC = () => {
       await productService.createProduct(formData);
       
       Swal.fire({
-        title: "Success!",
-        text: "Product created successfully",
+        title: "Product created successfully!",
         icon: "success",
-        timer: 1500,
+        showConfirmButton: false,
+          timer: 1500, 
       });
 
       // Reset form
@@ -130,9 +130,10 @@ const AddProductDialog: React.FC = () => {
     } catch (error) {
       console.error("Create product error:", error);
       Swal.fire({
-        title: "Error!",
-        text: "Failed to create product",
+        title: "Failed to create product!",
         icon: "error",
+        showConfirmButton: false,
+          timer: 1500, 
       });
     } finally {
       setIsLoading(false);
