@@ -5,11 +5,13 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { BounceLoader } from 'react-spinners';
 import { ArrowLeft } from '@mui/icons-material';
 import { OrderService } from '../../services/OrderService';
+import { OrderState } from '../../types/OrderState';
+import Swal from 'sweetalert2';
 
 interface Order {
     id: number;
     createdAt: string;
-    orderState: string;
+    orderState: OrderState; // Changed to use OrderState type
     cartSnapshot: {
       items: Array<{
         name: string;
@@ -23,17 +25,12 @@ interface Order {
     } | null;
 }
 
-const ORDER_STATES = {
-  HOLD: 'hold',
-  SHIPPED: 'shipped',
-  DELIVERED: 'delivered'
-} as const;
-
 const AdminUserOrders: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const orderService = new OrderService();
   const navigate = useNavigate();
 
@@ -54,16 +51,51 @@ const AdminUserOrders: React.FC = () => {
     }
   }, [userId]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case ORDER_STATES.HOLD: return 'orange';
-      case ORDER_STATES.SHIPPED: return 'blue';
-      case ORDER_STATES.DELIVERED: return 'green';
+  const getStatusColor = (status: OrderState) => {
+    switch (status.toLowerCase()) { // Case-insensitive check
+      case "hold": return 'orange';
+      case "shipped": return 'blue';
+      case "delivered": return 'green';
       default: return 'gray';
     }
   };
 
-  
+  const handleUpdateOrderStatus = async (orderId: number, currentState: OrderState) => {
+    try {
+      setUpdatingOrderId(orderId);
+      let newState: OrderState;
+
+      if (currentState.toLowerCase() === "hold") {
+        newState = "shipped";
+      } else if (currentState.toLowerCase() === "shipped") {
+        newState = "delivered";
+      } else {
+        return;
+      }
+
+      const updatedOrder = await orderService.updateOrderState(orderId, newState);
+      
+      setOrders(orders.map(order => 
+        order.id === orderId ? updatedOrder : order
+      ));
+
+      Swal.fire({
+        title: `Order status updated to ${newState}!`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      Swal.fire({
+        title: 'Failed to update order status!',
+        icon: 'error',
+        showConfirmButton: false,
+      });
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
 
   if (error) return <Text color="red">{error}</Text>;
   if (loading) return (
@@ -117,59 +149,72 @@ const AdminUserOrders: React.FC = () => {
           <Flex direction="column" gap="4" style={{marginTop: '40px'}}>
             <Text size="5" weight="bold" align="center">User Orders</Text>
             
-            {orders.map((order) => (
-              <Card key={order.id} variant="classic" style={{ 
-                boxShadow: '0 1px 20px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                transition: 'box-shadow 0.3s ease-in-out',
-              }}>
-                <Flex direction="column" gap="3">
-                  <Flex justify="between" align="center">
-                    <Text weight="bold">Order #{order.id}</Text>
-                    <Flex align="center" gap="2">
-                      <Badge color={getStatusColor(order.orderState)}>
-                        {order.orderState.toUpperCase()}
-                      </Badge>
-                      {order.orderState !== ORDER_STATES.DELIVERED
-                        
-                      }
-                    </Flex>
-                  </Flex>
-
-                  <Grid columns="2" gap="3">
-                    <Flex direction="column" gap="1">
-                      <Text color="gray">Date</Text>
-                      <Text>{new Date(order.createdAt).toLocaleDateString()}</Text>
-                    </Flex>
-
-                    <Flex direction="column" gap="1">
-                      <Text color="gray">Total</Text>
-                      <Text weight="bold">
-                        ${order.cartSnapshot?.total.toFixed(2) || '0.00'}
-                      </Text>
-                    </Flex>
-                  </Grid>
-
-                  <Flex direction="column" gap="1">
-                    <Text color="gray">Items</Text>
-                    {order.cartSnapshot?.items?.map((item) => (
-                      <Flex key={`${item.productId}-${item.size}`} gap="2" align="center">
-                        {item.imageUrl && (
-                          <img 
-                            src={`http://localhost:5000/${item.imageUrl}`} 
-                            alt={item.name}
-                            style={{ width: 40, height: 40, objectFit: 'cover' }}
-                          />
+            {orders.map((order) => {
+              const normalizedState = order.orderState.toLowerCase();
+              const canUpdate = normalizedState !== 'delivered';
+              
+              return (
+                <Card key={order.id} variant="classic" style={{ 
+                  boxShadow: '0 1px 20px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  transition: 'box-shadow 0.3s ease-in-out',
+                }}>
+                  <Flex direction="column" gap="3">
+                    <Flex justify="between" align="center">
+                      <Text weight="bold">Order #{order.id}</Text>
+                      <Flex align="center" gap="2">
+                        <Badge color={getStatusColor(order.orderState)}>
+                          {order.orderState.toUpperCase()}
+                        </Badge>
+                        {canUpdate && (
+                          <Button
+                            size="1"
+                            variant="soft"
+                            onClick={() => handleUpdateOrderStatus(order.id, order.orderState)}
+                            disabled={updatingOrderId === order.id}
+                          >
+                            {updatingOrderId === order.id ? 'Updating...' : 
+                             normalizedState === 'hold' ? 'Mark as Shipped' : 'Mark as Delivered'}
+                          </Button>
                         )}
-                        <Text>
-                          {item.quantity} × {item.name} 
-                          {item.size && ` (${item.size})`} - ${item.price}
+                      </Flex>
+                    </Flex>
+
+                    <Grid columns="2" gap="3">
+                      <Flex direction="column" gap="1">
+                        <Text color="gray">Date</Text>
+                        <Text>{new Date(order.createdAt).toLocaleDateString()}</Text>
+                      </Flex>
+
+                      <Flex direction="column" gap="1">
+                        <Text color="gray">Total</Text>
+                        <Text weight="bold">
+                          ${order.cartSnapshot?.total.toFixed(2) || '0.00'}
                         </Text>
                       </Flex>
-                    )) || <Text color="gray">No items available</Text>}
+                    </Grid>
+
+                    <Flex direction="column" gap="1">
+                      <Text color="gray">Items</Text>
+                      {order.cartSnapshot?.items?.map((item) => (
+                        <Flex key={`${item.productId}-${item.size}`} gap="2" align="center">
+                          {item.imageUrl && (
+                            <img 
+                              src={`http://localhost:5000/${item.imageUrl}`} 
+                              alt={item.name}
+                              style={{ width: 40, height: 40, objectFit: 'cover' }}
+                            />
+                          )}
+                          <Text>
+                            {item.quantity} × {item.name} 
+                            {item.size && ` (${item.size})`} - ${item.price}
+                          </Text>
+                        </Flex>
+                      )) || <Text color="gray">No items available</Text>}
+                    </Flex>
                   </Flex>
-                </Flex>
-              </Card>
-            ))}
+                </Card>
+              );
+            })}
           </Flex>
         </Card>
       </Boxi>

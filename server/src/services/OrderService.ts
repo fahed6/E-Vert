@@ -21,6 +21,26 @@ export class OrderService {
   private userRepository = AppDataSource.getRepository(User);
   private addressRepository = AppDataSource.getRepository(Address);
 
+  async getLastMonthRevenue(): Promise<number> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30);
+  
+
+  
+    // Solution 2: Alternative using raw query with exact column names
+    
+    const result = await this.orderRepository.query(
+      `SELECT SUM(CAST("cartSnapshot"::json->>'total' AS numeric)) as total 
+       FROM "order" 
+       WHERE "createdAt" >= $1 AND "orderState" != $2`,
+      [startDate, OrderState.HOLD]
+    );
+    return parseFloat(result[0]?.total || "0");
+    
+  
+    return parseFloat(result?.totalRevenue || "0");
+  }
+
   async checkout(checkoutData: CheckoutData): Promise<Order> {
     const { cartId, userId, addressId, paymentMethod, amount } = checkoutData;
   

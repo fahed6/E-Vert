@@ -22,18 +22,25 @@ export class CartController {
 
   private async getCart(req: Request, res: Response): Promise<void> {
     try {
-      const userId = (req.params.id as any).id; // Access the user ID
-      const cart = await this.cartService.getCart(userId);
-      res.status(200).json(cart);
+        // Correct way to get the user ID from URL parameter
+        const userId = parseInt(req.params.id);
+        
+        if (isNaN(userId)) {
+            res.status(400).json({ message: "Invalid user ID" });
+            return;
+        }
+
+        const cart = await this.cartService.getCart(userId);
+        res.status(200).json(cart);
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
-  }
+}
 
   private async addToCart(req: Request, res: Response) {
     try {
       
-      const userId = (req.params.id as any).id; // Access the user ID
+      const userId = parseInt(req.params.id); // Access the user ID
       const { productId, quantity, size } = req.body;
       const cart = await this.cartService.addToCart(userId, productId, quantity, size);
       res.status(200).json(cart);
@@ -45,7 +52,7 @@ export class CartController {
   private async removeFromCart(req: Request, res: Response) {
     try {
       
-      const userId = (req.params.id as any).id; // Access the user ID
+      const userId = parseInt(req.params.id); // Access the user ID
       const { productId, size } = req.body;
       const cart = await this.cartService.removeFromCart(userId, productId, size);
       res.status(200).json(cart);
@@ -57,7 +64,7 @@ export class CartController {
   private async updateCartItem(req: Request, res: Response) {
     try {
       
-      const userId = (req.params.id as any).id; // Access the user ID
+      const userId = parseInt(req.params.id); // Access the user ID
       const { productId, quantity, size } = req.body;
       const cart = await this.cartService.updateCartItem(userId, productId, quantity, size);
       res.status(200).json(cart);

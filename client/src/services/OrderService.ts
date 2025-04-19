@@ -43,6 +43,7 @@ export class OrderService {
     return apiCall(url, "GET");
   }
 
+
   async checkout(userId: number, data: CheckoutData) {
     const { userId: _, ...requestData } = data;
     return apiCall(
@@ -73,11 +74,17 @@ export class OrderService {
     );
   }
 
-  async updateOrderState(orderId: number, state: OrderState) {
+  async updateOrderState(id: number, state: OrderState) {
     return apiCall(
-      `${BASE_URL}/${orderId}/state`,
+      `${BASE_URL}/${id}/state`,
       "PUT",
       { state }
+    );
+  }
+  async getMonthRevenue(){
+    return apiCall(
+      `${BASE_URL}/revenue/last-month`,
+      "GET"
     );
   }
 }

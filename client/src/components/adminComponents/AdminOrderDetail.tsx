@@ -14,8 +14,10 @@ import jsPDF from 'jspdf';
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BounceLoader } from 'react-spinners';
+import Swal from 'sweetalert2';
 import { OrderService } from '../../services/OrderService';
 import { Address } from '../../types/Address';
+import { OrderState } from '../../types/OrderState';
 import { User } from '../../types/User';
 
 interface OrderItem {
@@ -46,6 +48,7 @@ const AdminOrderDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const orderService = new OrderService();
   const navigate = useNavigate();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const pdfRef = useRef<HTMLDivElement>(null);
 
@@ -66,7 +69,44 @@ const AdminOrderDetail: React.FC = () => {
     fetchOrder();
   }, [orderId]);
   
+  const handleUpdateOrderState = async () => {
+    if (!order) return;
+    
+    try {
+      setIsUpdating(true);
+      let newState: OrderState;
+      
+      if (order.orderState === "hold") {
+        newState = "shipped";
+      } else if (order.orderState === "shipped") {
+        newState = "delivered";
+      } else {
+        // If already delivered, don't do anything
+        return;
+      }
+  
+      await orderService.updateOrderState(order.id, newState);
+      setOrder({ ...order, orderState: newState });
+      
+      Swal.fire({
+        title: `Order status updated to ${newState}!`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
 
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      Swal.fire({
+        title: 'Failed to update order status!',
+        showConfirmButton: false,
+        timer: 1500,
+        icon: 'error'
+      });
+    } finally {
+      setIsUpdating(false);
+    }
+  };
   const waitForImagesToLoad = (container: HTMLElement): Promise<void> => {
     const images = Array.from(container.getElementsByTagName("img"));
     const unloadedImages = images.filter((img) => !img.complete);
@@ -145,11 +185,23 @@ const AdminOrderDetail: React.FC = () => {
         <ArrowLeft />
         Back to Dashboard
       </Button>
+      
 
       {/* 👇 Normal styled version for UI */}
       <Flex direction="column" gap="5">
         <Heading size="5">Order Summary</Heading>
-
+        {order.orderState.toUpperCase() !== "DELIVERED" && (
+  <Button
+    variant="soft"
+    size="3"
+    onClick={handleUpdateOrderState}
+    disabled={isUpdating}
+  >
+    {isUpdating ? 'Updating...' : 
+     order.orderState.toUpperCase() === "HOLD" ? 'Mark as Shipped' : 
+     'Mark as Delivered'}
+  </Button>
+)}
         <Card>
           <Heading size="4" mb="3">
             Order Details

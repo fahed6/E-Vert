@@ -10,7 +10,7 @@ const DashboardContent: React.FC = () => {
   const [customerCount, setCustomerCount] = useState<string>('0');
   const [partnerCount, setPartnerCount] = useState<string>('0');
   const [ProductCount, setProductCount] = useState<string>('0');
-  const [orderCount, setOrderCount] = useState<string>('0');
+  const [revenue, setRevenue] = useState<string>('0');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,36 +19,46 @@ const DashboardContent: React.FC = () => {
       try {
         const userService = new UserService();
         const productService = new ProductService();
-        const orderService= new OrderService();
+        const orderService = new OrderService();
         
-        // Fetch both counts in parallel
-        const [customersResponse, partnersResponse,ProductResponse,OrderResponse] = await Promise.all([
+        // Fetch all data in parallel
+        const [
+          customersResponse, 
+          partnersResponse,
+          ProductResponse,
+          revenueResponse
+        ] = await Promise.all([
           userService.countUsers(),
           userService.countPartners(),
           productService.count(),
-          orderService.count()
+          orderService.getMonthRevenue()
         ]);
 
         // Check if responses are valid
-        if (customersResponse && partnersResponse && ProductResponse &&OrderResponse) {
-          // Access the count directly from response (adjust based on your actual API response structure)
+        if (customersResponse && partnersResponse && ProductResponse && revenueResponse) {
+          // Access the count directly from response
           const customers = customersResponse.count || customersResponse.data?.count || 0;
           const partners = partnersResponse.count || partnersResponse.data?.count || 0;
-          const products = ProductResponse.count || ProductResponse.data?.count || 0; 
-          const orders = OrderResponse.count || OrderResponse.data?.count || 0; 
+          const products = ProductResponse.count || ProductResponse.data?.count || 0;
+          const monthlyRevenue = revenueResponse.revenue || revenueResponse.data?.revenue || 0;
           
           // Format numbers with commas
           setCustomerCount(Number(customers).toLocaleString());
           setPartnerCount(Number(partners).toLocaleString());
           setProductCount(Number(products).toLocaleString());
-          setOrderCount(Number(orders).toLocaleString())
+          setRevenue(Number(monthlyRevenue).toLocaleString('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }));
         } else {
           throw new Error('Invalid response from server');
         }
         
       } catch (err) {
-        setError('Failed to load user statistics');
-        console.error('Error fetching user counts:', err);
+        setError('Failed to load dashboard statistics');
+        console.error('Error fetching dashboard data:', err);
       } finally {
         setLoading(false);
       }
@@ -67,33 +77,34 @@ const DashboardContent: React.FC = () => {
 
   return (
     <Box>
-      <Heading size="6" mb="4">Dashboard Overview</Heading>
-      <Grid columns={{ initial: "1", md: "2", lg: "4" }} gap="4">
-        <StatCard 
-          title="Total Customers" 
-          value={customerCount} 
-          trend="+12%" 
-          color="purple" 
-        />
-        <StatCard 
-          title="Total Partners" 
-          value={partnerCount} 
-          trend="+5%" 
-          color="grass" 
-        />
-        <StatCard 
-          title="Total Products" 
-          value={ProductCount}
-          trend="+8%" 
-          color="indigo" 
-        />
-        <StatCard 
-          title="Total Orders" 
-          value={orderCount} 
-          trend="+15%" 
-          color="amber" 
-        />
-      </Grid>
+    <Heading size="6" mb="4">Dashboard Overview</Heading>
+    <Grid columns={{ initial: "1", md: "2", lg: "4" }} gap="4">
+      <StatCard 
+        title="Monthly Revenue" 
+        value={revenue} 
+        trend="+12%" 
+        color="purple" 
+      />
+      <StatCard 
+        title="Total Partners" 
+        value={partnerCount} 
+        trend="+5%" 
+        color="grass" 
+      />
+       <StatCard 
+        title="Total Customers" 
+        value={customerCount} 
+        trend="+15%" 
+        color="indigo" 
+      />
+      <StatCard 
+        title="Total Products" 
+        value={ProductCount}
+        trend="+8%" 
+        color="amber" 
+      />
+     
+    </Grid>
       <Grid columns={{ initial: "1", lg: "2" }} gap="4" mt="6">
       <Card>
         <Heading size="4" mb="4">Recent Orders</Heading>

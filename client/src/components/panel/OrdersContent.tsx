@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { BounceLoader } from 'react-spinners';
 import { OrderService } from '../../services/OrderService';
 import { OrderState } from '../../types/OrderState';
+import Swal from 'sweetalert2';
 
 interface Order {
   id: number;
@@ -23,6 +24,7 @@ const OrdersContent: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [updatingOrderId, setUpdatingOrderId] = useState<number | null>(null);
   const orderService = new OrderService();
   const navigate = useNavigate();
   const itemsPerPage = 5;
@@ -52,9 +54,9 @@ const OrdersContent: React.FC = () => {
 
   const getStatusColor = (status: OrderState) => {
     switch (status) {
-      case 'DELIVERED': return 'green';
-      case 'HOLD': return 'amber';
-      case 'SHIPPED': return 'blue';
+      case 'delivered': return 'green';
+      case 'hold': return 'amber';
+      case 'shipped': return 'blue';
       default: return 'gray';
     }
   };
@@ -66,6 +68,45 @@ const OrdersContent: React.FC = () => {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const handleUpdateOrderStatus = async (orderId: number, currentState: OrderState) => {
+    try {
+      setUpdatingOrderId(orderId);
+      let newState: OrderState;
+
+      if (currentState === 'hold') {
+        newState = 'shipped';
+      } else if (currentState === 'shipped') {
+        newState = 'delivered';
+      } else {
+        return;
+      }
+
+      const updatedOrder = await orderService.updateOrderState(orderId, newState);
+      
+      setOrders(orders.map(order => 
+        order.id === orderId ? updatedOrder : order
+      ));
+
+      Swal.fire({
+        title: `Order status updated to ${newState}!`,
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.error('Error updating order status:', error);
+      Swal.fire({
+        title: 'Failed to update order status!',
+        icon: 'error',
+        timer: 1500,
+        showConfirmButton: false,
+
+      });
+    } finally {
+      setUpdatingOrderId(null);
+    }
   };
 
   if (loading) {
@@ -98,32 +139,49 @@ const OrdersContent: React.FC = () => {
         <Flex direction="column" gap="3">
           {orders.length > 0 ? (
             <>
-              {orders.map((order, index) => (
-                <React.Fragment key={order.id}>
-                  <Flex justify="between" align="center" py="2">
-                    <Flex gap="3" align="center">
-                      <Box>
-                        <Text weight="bold">Order #{order.id}</Text><br></br>
-                        <Text size="2" color="gray">{formatDate(order.createdAt)}</Text>
-                      </Box>
+              {orders.map((order, index) => {
+                const canUpdate = order.orderState !== 'delivered';
+                const buttonText = 
+                  order.orderState === 'hold' ? 'Mark as Shipped' : 
+                  order.orderState === 'shipped' ? 'Mark as Delivered' : '';
+                
+                return (
+                  <React.Fragment key={order.id}>
+                    <Flex justify="between" align="center" py="2">
+                      <Flex gap="3" align="center">
+                        <Box>
+                          <Text weight="bold">Order #{order.id}</Text><br></br>
+                          <Text size="2" color="gray">{formatDate(order.createdAt)}</Text>
+                        </Box>
+                      </Flex>
+                      <Flex gap="3" align="center">
+                        <Text> ${order.cartSnapshot?.total.toFixed(2) || '0.00'}</Text>
+                        <Badge color={getStatusColor(order.orderState)}>
+                          {order.orderState}
+                        </Badge>
+                        {canUpdate && (
+                          <Button 
+                            variant="soft" 
+                            size="1"
+                            onClick={() => handleUpdateOrderStatus(order.id, order.orderState)}
+                            disabled={updatingOrderId === order.id}
+                          >
+                            {updatingOrderId === order.id ? 'Updating...' : buttonText}
+                          </Button>
+                        )}
+                        <Button 
+                          variant="soft" 
+                          size="1"
+                          onClick={() => navigate(`/AdminDashboard/user/order/${order.id}`)}
+                        >
+                          View
+                        </Button>
+                      </Flex>
                     </Flex>
-                    <Flex gap="3" align="center">
-                    <Text> ${order.cartSnapshot?.total.toFixed(2) || '0.00'}</Text>
-                      <Badge color={getStatusColor(order.orderState)}>
-                        {order.orderState}
-                      </Badge>
-                      <Button 
-                        variant="soft" 
-                        size="1"
-                        onClick={() => navigate(`/AdminDashboard/user/order/${order.id}`)}
-                      >
-                        View
-                      </Button>
-                    </Flex>
-                  </Flex>
-                  {index < orders.length - 1 && <Separator size="4" />}
-                </React.Fragment>
-              ))}
+                    {index < orders.length - 1 && <Separator size="4" />}
+                  </React.Fragment>
+                );
+              })}
               
               <Flex justify="center" mt="4">
                 <Pagination

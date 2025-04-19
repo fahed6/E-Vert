@@ -121,22 +121,29 @@ export class ProductController {
    */
   async updateProduct(req: Request, res: Response): Promise<void> {
     try {
-      const id = req.params.id;
+      const id = Number(req.params.id);
       const { categories, ...otherFields } = req.body;
   
+      // 1. First find the existing product
+      const existingProduct = await this.productService.getProductById(id);
+      if (!existingProduct) {
+        res.status(404).json({ error: 'Product not found' });
+        return;
+      }
+  
+      // 2. Prepare update data
       const updateData: Partial<Product> = {
         ...otherFields,
         ...(req.file && { image: req.file.path }),
       };
   
-      // Handle categories - expect JSON string array of category names
+      // 3. Handle categories
       if (categories) {
         try {
           const categoryNames = typeof categories === 'string' 
             ? JSON.parse(categories)
             : categories;
           
-          // Find or create categories
           const categoryEntities = await Promise.all(
             categoryNames.map(async (name: string) => {
               let category = await this.categoryRepository.findOne({ 
@@ -156,14 +163,34 @@ export class ProductController {
         }
       }
   
-      const product = await this.productService.updateProduct(
-        Number(id),
-        updateData
-      );
+      // 4. Perform the update - IMPORTANT: Use repository.update() for direct updates
+      await AppDataSource.getRepository(Product).update(id, {
+        name: updateData.name,
+        description: updateData.description,
+        stock: updateData.stock,
+        price: updateData.price,
+        image: updateData.image,
+        ownerId: updateData.ownerId,
+      });
   
-      res.status(200).json(product);
+      // 5. Handle relations separately if needed
+      if (updateData.categories) {
+        await AppDataSource.getRepository(Product)
+          .createQueryBuilder()
+          .relation(Product, "categories")
+          .of(id)
+          .addAndRemove(
+            updateData.categories,
+            existingProduct.categories
+          );
+      }
+  
+      // 6. Return the updated product
+      const updatedProduct = await this.productService.getProductById(id);
+      res.status(200).json(updatedProduct);
     } catch (error) {
-      res.status(500).json({ error});
+      console.error('Update error:', error);
+      res.status(500).json({ error: error instanceof Error ? error.message : 'Unknown error' });
     }
   }
   /**

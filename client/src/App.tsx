@@ -2,12 +2,14 @@ import { Theme } from "@radix-ui/themes";
 import '@radix-ui/themes/styles.css';
 import React from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import AdminOrderDetail from "./components/adminComponents/AdminOrderDetail";
 import AdminProductsContent from "./components/adminComponents/adminProductsContent";
 import AdminUserEdit from "./components/adminComponents/AdminUserEdit";
 import AdminUserOrders from "./components/adminComponents/AdminUserOrders";
 import Layout from './components/Layout';
 import AdminDashboard from "./components/panel/AdminDashboard";
 import { AdminLayout } from "./components/panel/AdminLayout";
+import PartnerDashboard from "./components/panel/partner/PartnerDashboard";
 import ProtectedRoute from './config/auth/protectedRoute';
 import CartPage from "./pages/CartPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
@@ -19,8 +21,7 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import Profile from "./pages/Profile";
 import SignupPage from './pages/SignupPage';
-import AdminOrderDetail from "./components/adminComponents/AdminOrderDetail";
-import PartnerDashboard from "./components/panel/partner/PartnerDashboard";
+import PlantDiseaseDetector from "./components/PlantDiseaseDetector";
 
 const App: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const App: React.FC = () => {
             <Route path="/products" element={<ProductPage />}/>
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/PlantDiseaseDetector" element={<PlantDiseaseDetector />} />
             
             {/* Protected routes */}
             <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>

@@ -50,7 +50,9 @@ const CartPage: React.FC = () => {
 
       try {
         setLoading(true);
-        const cartData = await cartService.getCart(user.id); // Pass userId here
+        const cartData = await cartService.getCart(user.id);
+        console.log("user id ="+user.id) // Pass userId here
+        console.log("cart id ="+cartData.id)
         setCart(cartData);
         setError(null);
       } catch (err) {

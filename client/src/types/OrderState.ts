@@ -1,4 +1,4 @@
-export type OrderState = "HOLD" | "SHIPPED" | "DELIVERED";
+export type OrderState = "hold" | "shipped" | "delivered";
 export interface Order {
     id: number;
     userId: number;
