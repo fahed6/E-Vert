@@ -3,6 +3,16 @@ import { Product } from '../types/Product';
 
 const BASE_URL_PRODUCT = 'http://localhost:5000/product'; // Base URL for product endpoints
 
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    total: number;
+    page: number;
+    totalPages: number;
+    limit: number;
+  };
+}
+
 export class ProductService {
   // Create a new product with file upload
   async createProduct(productData: FormData): Promise<Product> {
@@ -14,8 +24,14 @@ export class ProductService {
   }
 
   // Get all products
-  async getAllProducts(): Promise<Product[]> {
-    return apiCall(`${BASE_URL_PRODUCT}`, 'GET');
+  async getAllProducts(
+    page: number = 1, 
+    limit: number = 10
+  ): Promise<PaginatedResponse<Product>> {
+    return apiCall(
+      `${BASE_URL_PRODUCT}?page=${page}&limit=${limit}`, 
+      'GET'
+    );
   }
   async getRandomProducts(): Promise<Product[]> {
     return apiCall(`${BASE_URL_PRODUCT}/random`, 'GET');

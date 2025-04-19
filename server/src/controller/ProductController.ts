@@ -79,12 +79,28 @@ export class ProductController {
    */
   async getAllProducts(req: Request, res: Response) {
     try {
-      const products = await this.productService.getAllProducts();
-      res.status(200).json(products);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
+        
+        const result = await this.productService.getAllProducts(page, limit);
+        
+        res.status(200).json({
+            success: true,
+            data: result.products,
+            pagination: {
+                total: result.total,
+                page: result.page,
+                totalPages: result.totalPages,
+                limit
+            }
+        });
     } catch (error: any) {
-      res.status(500).json({ message: error.message });
+        res.status(500).json({ 
+            success: false,
+            message: error.message 
+        });
     }
-  }
+}
 
   /**
    * Fetch random products

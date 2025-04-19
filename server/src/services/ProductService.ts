@@ -53,11 +53,20 @@ export class ProductService {
     return await this.productRepository.save(product);
   }
 
-  async getAllProducts(): Promise<Product[]> {
-    return await this.productRepository.find({
-      relations: ["owner", "categories"],
+  async getAllProducts(page: number = 1, limit: number = 10): Promise<{ products: Product[]; total: number; page: number; totalPages: number }> {
+    const [products, total] = await this.productRepository.findAndCount({
+        relations: ["owner", "categories"],
+        skip: (page - 1) * limit,
+        take: limit,
     });
-  }
+
+    return {
+        products,
+        total,
+        page,
+        totalPages: Math.ceil(total / limit),
+    };
+}
 
   async getRandomProducts(limit: number = 7): Promise<Product[]> {
     return await this.productRepository.find({
