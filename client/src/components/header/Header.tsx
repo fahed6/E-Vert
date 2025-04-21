@@ -57,6 +57,11 @@ const Header = () => {
       icon: <ShoppingCartRoundedIcon />,
       onClick: () => navigate("/cart"),
     },
+    {
+      text: "Our AI",
+      icon: <ShoppingCartRoundedIcon />,
+      onClick: () => navigate("/PlantDiseaseDetector"),
+    },
     // Conditionally add Profile link when authenticated
     ...(isAuthenticated
       ? [
@@ -92,7 +97,7 @@ const Header = () => {
       </div>
       <div className="navbar-links-container">
         <a href="/">Home</a>
-        <a href="/about">About</a>
+        <a href="/PlantDiseaseDetector">Our-AI</a>
         <a href="/contact">Contact</a>
         <a href="/Products">Products</a>
         <a href="/cart">
@@ -105,6 +110,7 @@ const Header = () => {
             Profile
           </a>
         )}
+        
 
         {isAuthenticated ? (
           <Button onClick={handleLogout} className="left">

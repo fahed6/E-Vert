@@ -16,7 +16,7 @@ const Footer: React.FC = () => {
                 borderTop: '1px solid var(--gray-6)',
                 
                 overflow: 'hidden', // Ensure the pseudo-element doesn't overflow
-                height:"450px",
+                height:"320px",
             }}>
                 {/* Pseudo-element for the background image with opacity */}
                 <Box style={{
@@ -71,7 +71,7 @@ const Footer: React.FC = () => {
                     {/* Centered text at the bottom of the footer */}
                     
                 </Flex>
-                <Flex justify="center" align="end" style={{paddingTop:"12%", paddingBottom: '20px', }}>
+                <Flex justify="center" align="end" style={{paddingTop:"1%", paddingBottom: '20px', }}>
                         <Text style={{ textAlign: 'center' }}><strong>©2025 E-VERT</strong></Text>
                     </Flex>
             </Box>
