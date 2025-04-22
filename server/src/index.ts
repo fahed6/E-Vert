@@ -11,6 +11,7 @@ import { UserController } from "./controller/UserController";
 import AppDataSource from "./data-source";
 import { CartController } from "./controller/CartController";
 import { OrderController } from "./controller/OrderController";
+import payment from "./controller/payment";
 const http = require("http");
 
 
@@ -47,6 +48,8 @@ app.use("/cart", cartController.router);
 
 const orderController = new OrderController();
 app.use("/order", orderController.router);
+
+app.use('/payments', payment);
 
 const PORT = process.env.PORT || 5000;
 

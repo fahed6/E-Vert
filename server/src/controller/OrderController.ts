@@ -20,8 +20,33 @@ export class OrderController {
     this.router.put("/:id/state", this.updateOrderState.bind(this));
     this.router.get("/count/total", this.getTotalOrderCount.bind(this)); // New route
     this.router.get("/revenue/last-month", this.getLastMonthRevenue.bind(this));
+    this.router.get("/:userId/last-order", this.getLastOrderForUser.bind(this));
   }
+async getLastOrderForUser(req: Request, res: Response): Promise<void> {
+  try {
+    const userId = parseInt(req.params.userId);
+    if (isNaN(userId)) {
+      res.status(400).json({ message: "Invalid user ID" });
+      return;
+    }
 
+    const lastOrder = await this.orderService.getLastOrderForUser(userId);
+    
+    if (!lastOrder) {
+      res.status(404).json({ 
+        message: "No orders found for this user" 
+      });
+      return;
+    }
+
+    res.status(200).json(lastOrder);
+  } catch (error) {
+    console.error("Get last order error:", error);
+    res.status(500).json({ 
+      message: error instanceof Error ? error.message : "Failed to get last order" 
+    });
+  }
+}
 
   async getLastMonthRevenue(req: Request, res: Response): Promise<void> {
     try {

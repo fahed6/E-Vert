@@ -110,6 +110,13 @@ export class OrderService {
       order: { createdAt: "DESC" }
     });
   }
+  async getLastOrderForUser(userId: number): Promise<Order | null> {
+    return this.orderRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ["payment", "address", "user"],
+      order: { createdAt: "DESC" },
+    });
+  }
 
   async getOrderById(orderId: number): Promise<Order> {
     const order = await this.orderRepository.findOne({ 

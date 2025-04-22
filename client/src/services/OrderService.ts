@@ -42,6 +42,11 @@ export class OrderService {
     const url = `${BASE_URL}/?${queryParams.toString()}`;
     return apiCall(url, "GET");
   }
+  async getlastorder(userId: number){
+    return apiCall(`${BASE_URL}/${userId}/last-order`,
+      "GET"
+    );
+  }
 
 
   async checkout(userId: number, data: CheckoutData) {

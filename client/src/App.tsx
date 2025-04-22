@@ -10,6 +10,7 @@ import Layout from './components/Layout';
 import AdminDashboard from "./components/panel/AdminDashboard";
 import { AdminLayout } from "./components/panel/AdminLayout";
 import PartnerDashboard from "./components/panel/partner/PartnerDashboard";
+import PlantDiseaseDetector from "./components/PlantDiseaseDetector";
 import ProtectedRoute from './config/auth/protectedRoute';
 import CartPage from "./pages/CartPage";
 import ChangePasswordPage from "./pages/ChangePasswordPage";
@@ -21,7 +22,6 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import Profile from "./pages/Profile";
 import SignupPage from './pages/SignupPage';
-import PlantDiseaseDetector from "./components/PlantDiseaseDetector";
 
 const App: React.FC = () => {
   return (
@@ -46,6 +46,7 @@ const App: React.FC = () => {
               <Route path="/profile" element={<Profile />} />
               <Route path="/checkout" element={<CheckoutPage />} />
               <Route path="/orders/:orderId" element={<OrderDetail />} />
+
               
             </Route>
           </Route>

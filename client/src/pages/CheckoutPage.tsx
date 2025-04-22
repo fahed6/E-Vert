@@ -19,6 +19,9 @@ import { OrderService } from '../services/OrderService';
 import { Address } from '../types/Address';
 import { Cart } from '../types/Cart';
 import { PaymentMethod } from '../types/PaymentMethod';
+import PaymentPopup from '../components/PaymentPopup';
+import Swal from 'sweetalert2';
+
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,28 +32,25 @@ const CheckoutPage: React.FC = () => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showPaymentPopup, setShowPaymentPopup] = useState(false); // State for payment popup visibility
 
   const cartService = new CartService();
   const orderService= new OrderService();
   const addressService = new AddressService();
 
   useEffect(() => {
-    // If user is defined (not undefined), fetch data
     if (user) {
       const fetchData = async () => {
         try {
           setLoading(true);
-          // Fetch cart
           const cartData = await cartService.getCart(user.id);
           
-          // If cart is empty, redirect to products
           if (!cartData || cartData.items.length === 0) {
             navigate('/products');
             return;
           }
           setCart(cartData);
 
-          // Fetch user address
           const userAddress = await addressService.getAddressByUserId(user.id);
           setAddress(userAddress);
          
@@ -71,6 +71,22 @@ const CheckoutPage: React.FC = () => {
       total + (item.product.price * item.quantity), 0) || 0;
   };
 
+  const handlePaymentMethodChange = (value: string) => {
+    const method = value as PaymentMethod;
+    setPaymentMethod(method);
+    
+    // Show payment popup only for card payment
+    if (method === 'card') {
+      setShowPaymentPopup(true);
+    }
+  };
+
+  const handlePaymentSuccess = (paymentIntentId: string) => {
+    // Handle successful payment (you might want to store the paymentIntentId)
+    console.log('Payment successful:', paymentIntentId);
+    setShowPaymentPopup(false);
+  };
+
   const handleCheckout = async () => {
     if (!user || !address || !paymentMethod) {
       setError('Please select a payment method');
@@ -86,37 +102,52 @@ const CheckoutPage: React.FC = () => {
         paymentMethod,
         amount: calculateTotalPrice()
       };
-      console.log(checkoutData)
+      
       await orderService.checkout(user.id, checkoutData);
-     console.log(checkoutData)
       
       // Clear cart after successful checkout
       await cartService.clearCart(user.id);
       
       // Redirect to order confirmation or orders page
-      navigate('/orders/confirmation');
+
+      
+      Swal.fire({
+              title: "Order Sent successfully!",
+              icon: "success",
+              showConfirmButton: false,
+              timer: 1500,  
+            }).then(() => {
+              navigate('/Products');
+            });
     } catch (err) {
       console.error('Checkout error:', err);
+      Swal.fire({
+        title: "Error Sending Your Order!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500,  
+      }).then(() => {
+        window.location.reload();
+      });
       setError('Failed to complete checkout');
     } finally {
       setLoading(false);
     }
   };
 
-  // Show loading spinner while data is being fetched
   if (loading) {
     return (
       <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100px',
-      }}
-    >
-    <BounceLoader color="#4CAF50" size={35}/>
-    </Box>
-  );
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100px',
+        }}
+      >
+        <BounceLoader color="#4CAF50" size={35}/>
+      </Box>
+    );
   }
 
   if (error) {
@@ -126,7 +157,6 @@ const CheckoutPage: React.FC = () => {
           <Text color="red">{error}</Text>
           <Button onClick={() => {
             setError(null);
-            // Retry fetching data
             if (user) {
               const refetchData = async () => {
                 try {
@@ -210,7 +240,8 @@ const CheckoutPage: React.FC = () => {
         <Card>
           <Heading size="4" mb="3">Payment Method</Heading>
           <RadioGroup.Root 
-            onValueChange={(value) => setPaymentMethod(value as PaymentMethod)}
+            value={paymentMethod || ''}
+            onValueChange={handlePaymentMethodChange}
           >
             <Flex direction="column" gap="2">
               <Flex align="center" gap="2">
@@ -246,6 +277,14 @@ const CheckoutPage: React.FC = () => {
           </Flex>
         </Card>
       </Flex>
+
+      {/* Payment Popup */}
+      <PaymentPopup
+        open={showPaymentPopup}
+        onClose={() => setShowPaymentPopup(false)}
+        onPaymentSuccess={handlePaymentSuccess}
+        amount={calculateTotalPrice()}
+      />
     </Container>
   );
 };

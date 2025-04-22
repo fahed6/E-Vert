@@ -6,6 +6,7 @@ import { apiCall } from "../config/api/apiCall"; // Import API call function
 import { auth, googleProvider } from "../config/firebase-config";
 import { checkUserStatus } from "../hooks/checkUserStatus";
 
+
 const useAuth = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -16,23 +17,44 @@ const useAuth = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("User signed in:", userCredential.user);
-
+  
       const idToken = await userCredential.user.getIdToken();
       localStorage.setItem("firebaseIdToken", idToken);
-
+  
+      // Wait for the user data to be available
       const userExists = await checkUserStatus(userCredential.user.uid);
+      
       if (userExists) {
-        navigate("/");
+        // Get fresh user data after sign-in
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          const token = await currentUser.getIdTokenResult();
+          const role = token.claims.role || 'user'; // Default to 'user' if role isn't set
+          
+          if (role === "admin") {
+            navigate("/AdminDashboard");
+          } else if (role === "partner") {
+            navigate("/PartnerDashboard");
+          } else {
+            navigate("/");
+          }
+        }
       }
     } catch (error: any) {
       console.error("Error signing in:", error.message);
-
-      // 🔹 Show popup ONLY when the user is disabled
+  
       if (error.code === "auth/user-disabled") {
         await Swal.fire({
           icon: "error",
           title: "Account Disabled",
           text: "Your account has been disabled. Please contact support.",
+        });
+      } else {
+        // Show general error message for other errors
+        await Swal.fire({
+          icon: "error",
+          title: "Login Failed",
+          text: error.message,
         });
       }
     }
