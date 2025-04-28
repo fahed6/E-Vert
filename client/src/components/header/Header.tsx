@@ -92,7 +92,7 @@ const Header = () => {
     <nav>
       <div className="nav-logo-container">
         <a href="/">
-          <img src={Logo} alt="Logo" style={{ height: "40px" }} />
+          <img src={Logo} alt="Logo" style={{ height: "40px", width:"full"}} />
         </a>
       </div>
       <div className="navbar-links-container">

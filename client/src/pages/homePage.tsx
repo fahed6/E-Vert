@@ -5,6 +5,8 @@ import BannerBackground from "../Assets/home-banner-background.png";
 import BannerImage from "../Assets/home-banner-image.png";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
+import Work from "../components/work";
+import ServicesSection from "../components/ServicesSection";
 
 
 const HomePage: React.FC = () => {
@@ -37,11 +39,11 @@ const HomePage: React.FC = () => {
         </div>
       </div>
     </div>
-
-    <div style={{ paddingTop:"250px", width:"101%" }}>
+    <Work/>
+    <ServicesSection/>
+    <div style={{ paddingTop:"250px", width:"100%" }}>
       <Footer />
       </div>
-
     </div>
     
   );

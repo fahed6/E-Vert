@@ -22,6 +22,7 @@ import ProductDetails from "./pages/ProductDetails";
 import ProductPage from "./pages/ProductPage";
 import Profile from "./pages/Profile";
 import SignupPage from './pages/SignupPage';
+import { ContactForm } from "./components/ContactForm";
 
 const App: React.FC = () => {
   return (
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/change-password" element={<ChangePasswordPage />} />
           
+          
           {/* Main layout routes (with header) */}
           <Route element={<Layout><Outlet /></Layout>}>
             <Route path="/" element={<HomePage />} />
@@ -40,6 +42,7 @@ const App: React.FC = () => {
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/PlantDiseaseDetector" element={<PlantDiseaseDetector />} />
+            <Route path="/contact" element={<ContactForm  />} />
             
             {/* Protected routes */}
             <Route element={<ProtectedRoute><Outlet /></ProtectedRoute>}>
