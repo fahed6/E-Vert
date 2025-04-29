@@ -6,7 +6,7 @@ import BannerImage from "../Assets/home-banner-image.png";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import Work from "../components/work";
-import ServicesSection from "../components/ServicesSection";
+import GrowItPage from "../components/ServicesSection";
 
 
 const HomePage: React.FC = () => {
@@ -40,8 +40,8 @@ const HomePage: React.FC = () => {
       </div>
     </div>
     <Work/>
-    <ServicesSection/>
-    <div style={{ paddingTop:"250px", width:"100%" }}>
+    <GrowItPage/>
+    <div style={{ paddingTop:"50px", width:"100%" }}>
       <Footer />
       </div>
     </div>

@@ -1,101 +1,267 @@
+import { Mail, Phone } from "@mui/icons-material";
 import React from "react";
-import { PhoneIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import Image1 from "../Assets/p1.jpeg";
+import Image2 from "../Assets/485282970_1047016290796513_4458929669617560940_n.jpg";
+import Image3 from "../Assets/484092227_1047016307463178_2922050171621659908_n.jpg";
+import Image4 from "../Assets/Logo-New-WebSite-GIY4.png";
+import { useNavigate } from "react-router-dom";
+
+
 
 const GrowItPage = () => {
+  const navigate = useNavigate();
   // Hydroponie menu items
-  const hydroponieMenu = [
-    { title: "Technique du film nutritif (NFT)", url: "#" },
-    { title: "Culture sur radeaux flottants (RAFT)", url: "#" },
-    { title: "Seaux Hollandais (Dutch Buckets)", url: "#" }
-  ];
+
 
   // Partners data
-  const partners = [
-    { name: "giz", logo: "/partners/giz.png" },
-    { name: "Mcovjee", logo: "/partners/mcovjee.png" },
-    { name: "APiA", logo: "/partners/apia.png" }
-  ];
+  const partners = ["Grow It Yourself",];
 
   // Projects data
   const projects = [
     { 
       title: "Potager urbain - UBCI, Tunis", 
-      image: "/projects/ubci.jpg",
-      description: "Urban gardening solution for UBCI bank"
+      description: "Urban gardening solution for UBCI bank",
+      image:Image2
     },
     { 
       title: "Hydroponie - INPFCA, Sidi Thabet", 
-      image: "/projects/inpfca.jpg",
-      description: "Hydroponic system for agricultural institute"
+      description: "Hydroponic system for agricultural institute",
+      image:Image3
     }
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      {/* Main Content */}
-      <div className="flex-1 p-8">
-        {/* Hero Section */}
-        <section className="mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">GIY, votre partenaire agricole !</h1>
-          <div className="prose max-w-3xl text-gray-700">
-            <p>
-              Grow It Yourself, GIY, est une start-up spécialisée en agriculture hors-sol qui vise à améliorer 
-              les rendements de l'agriculture durable en zones urbaines et rurales.
-            </p>
-            <p>
-              Initiatrice d'innovations sociales, GIY fabrique, installe et assure la maintenance de systèmes 
-              hydroponiques clé en main qui permettent de cultiver des produits alimentaires sans pesticide.
-            </p>
-            <p>
-              Soucieuse de l'environnement, GIY renforce les compétences des acteurs locaux grâce à un panel 
-              de formations adaptées à l'agriculture moderne.
-            </p>
+    <div style={{
+      display: 'flex',
+      minHeight: '100vh',
+      
+    }}>
+      {/* Sidebar (Left - 25% width) */}
+      <aside style={{
+        width: '25%',
+        backgroundColor: 'white',
+        padding: '1.5rem',
+        borderRight: '1px solid #e5e7eb',
+        position: 'sticky',
+        top: 0,
+        height: '100vh',
+        overflowY: 'auto'
+      }}>
+        {/* Hydroponie Menu */}
+
+
+        {/* Contact Card */}
+        <div style={{
+          backgroundColor: '#003300',
+          padding: '1.5rem',
+          borderRadius: '0.5rem',
+          border: '1px solid #e5e7eb'
+        }}>
+          <div style={{
+            fontSize: '2.25rem',
+            color: 'white',
+            marginBottom: '1rem'
+          }}>
+            💡
           </div>
-        </section>
+          <h3 style={{
+            fontSize: '1.125rem',
+            fontWeight: '600',
+            color: 'white',
+            marginBottom: '0.5rem'
+          }}>
+Project idea?          </h3>
+          <p style={{ color: 'white', marginBottom: '1.5rem' }}>
+          Our experts answer you!
+          </p>
+          
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.75rem' }}>
+              <Phone sx={{ color: "white" }}/>
+              <span style={{ color: 'white' }}> (+216) 58 405 161</span>
+            </div>
+            
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Mail sx={{ color: "white" }}/>
+              <span style={{ color: 'white' }}> info@e-vert.com</span>
+            </div>
+          </div>
+          
+          <button onClick={() => navigate("/contact")} style={{
+            width: '100%',
+            backgroundColor: 'white',
+            color: 'white',
+            fontWeight: '500',
+            padding: '0.5rem 1rem',
+            borderRadius: '0.375rem',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
+          }}>
+            <span style={{color:"black"}}>Contact-us</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content (75% width) */}
+      <main style={{
+        flex: 1,
+        padding: '2rem',
+        position: 'relative'
+      }}>
+        {/* Hero Section with Image */}
+        <div style={{
+          display: 'flex',
+          marginBottom: '3rem',
+          position: 'relative'
+        }}>
+          <div style={{ flex: 1, maxWidth: '40%', height:'920px' }}>
+            <h1 style={{
+              fontSize: '2rem',
+              fontWeight: 'bold',
+              color: '#111827',
+              marginBottom: '1.5rem'
+            }}>
+              E-Vert, Your Agricultural Partner !
+            </h1>
+            <div style={{ color: '#374151', lineHeight: '1.6' }}>
+              <p style={{ marginBottom: '1rem' }}>
+                Our platform is designed to serve both farmers and agricultural product vendors. On one hand, it assists users in identifying plant diseases through image-based diagnosis powered by artificial intelligence. On the other hand, it provides smart recommendations for appropriate products, such as fertilizers or treatments, directly linked to the detected issues.</p>
+              <p style={{ marginBottom: '1rem' }}>
+              In addition, the platform includes a fully integrated online store where users can browse, add to cart, and order products, while vendors and administrators manage inventory and deliveries.</p>
+              <p>
+                 
+
+The motivation behind this project stems from the recurring issues faced by farmers, especially in rural or under-resourced areas, where access to expert advice or quick solutions for plant diseases can be limited. By offering a digital assistant capable of both detection and recommendation, the platform bridges a critical gap between problem identification and resolution.</p>
+            </div>
+          </div>
+          
+          {/* Hero Image */}
+          <div style={{
+            position: 'absolute',
+            right: 0,
+            top: 0,
+            width: '50%',
+            height: '100%',
+            backgroundColor: '#e5e7eb',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#6b7280',
+            borderRadius: '0.5rem',
+            overflow: 'hidden'
+          }}>
+            <img src={Image1} />
+          </div>
+        </div>
 
         {/* Edito Section */}
-        <section className="mb-12 bg-white p-6 rounded-lg shadow-sm">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Edito</h2>
-          <blockquote className="italic text-gray-700 border-l-4 border-green-500 pl-4 py-2 mb-4">
-            "Très vite j'ai fait le constat que les défis environnementaux et alimentaires auxquels va faire face 
-            la région Afrique du Nord ne pourront être surmontés sans apporter des améliorations à nos techniques 
-            d'agriculture traditionnelle. Sécheresse, dégradation des sols, augmentation de la population et des 
-            besoins alimentaires... L'agriculture moderne y apporte des solutions et GIY se veut un leader dans 
-            la région pour contribuer à les promouvoir."
+        <section style={{
+          marginBottom: '3rem',
+           background: 'var(--gray-1)',
+          padding: '1.5rem',
+          borderRadius: '0.5rem',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+          border: '1px solid #e5e7eb',
+          width: '60%',
+        }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '1rem'
+          }}>
+            Edito
+          </h2>
+          <blockquote style={{
+            fontStyle: 'italic',
+            color: '#374151',
+            borderLeft: '4px solid #10b981',
+            paddingLeft: '1rem',
+            marginBottom: '1rem'
+          }}>
+            "I quickly realized that the environmental and food challenges facing the North African region cannot be overcome without improvements to our traditional agricultural techniques. Drought, soil degradation, increasing population and food needs... Modern agriculture provides solutions, and GIY aims to be a leader in the region to help promote them."
           </blockquote>
-          <p className="font-medium text-gray-900">Ilyes Saidani - Président fondateur</p>
+          <p style={{ fontWeight: '500', color: '#111827' }}>
+          Fahed Mannoubi - Founding President
+          </p>
         </section>
 
         {/* Partners Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Nos partenaires</h2>
-          <div className="flex flex-wrap gap-8 items-center">
+        <section style={{ marginBottom: '3rem' }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '1.5rem'
+          }}>
+Our partners          </h2>
+          <div style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '2rem',
+            alignItems: 'center'
+          }}>
             {partners.map((partner, index) => (
-              <div key={index} className="bg-white p-4 rounded shadow-sm flex items-center justify-center">
-                <img 
-                  src={partner.logo} 
-                  alt={partner.name} 
-                  className="h-16 object-contain"
-                />
+              <div key={index} style={{
+                backgroundColor: 'white',
+                padding: '1rem',
+                borderRadius: '0.375rem',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                height: '5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <span style={{ fontWeight: '500', color: '#374151' }}>{partner}</span>
+                <div style={{width:"90px"}}> <img src={Image4}/></div>
               </div>
             ))}
           </div>
         </section>
 
         {/* Projects Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800">Projets réalisés</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section style={{ marginBottom: '3rem' }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '1.5rem'
+          }}>
+Completed projects          </h2>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '1.5rem'
+          }}>
             {projects.map((project, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm">
-                <img 
-                  src={project.image} 
-                  alt={project.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">{project.title}</h3>
-                  <p className="text-gray-600">{project.description}</p>
+              <div key={index} style={{
+                backgroundColor: 'white',
+                borderRadius: '0.5rem',
+                overflow: 'hidden',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                border: '1px solid #e5e7eb'
+              }}>
+                <div style={{
+                  backgroundColor: '#e5e7eb',
+                  height: '12rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#6b7280'
+                }}>
+                  <img src={project.image} />
+                </div>
+                <div style={{ padding: '1rem' }}>
+                  <h3 style={{
+                    fontSize: '1.125rem',
+                    fontWeight: '500',
+                    color: 'white',
+                    marginBottom: '0.5rem'
+                  }}>
+                    {project.title}
+                  </h3>
+                  <p style={{ color: 'white', }}>{project.description}</p>
                 </div>
               </div>
             ))}
@@ -103,56 +269,36 @@ const GrowItPage = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="bg-green-100 p-8 rounded-lg">
-          <h2 className="text-2xl font-semibold mb-2 text-gray-800">Idée de projet ?</h2>
-          <p className="text-lg mb-6 text-gray-700">Nos experts vous répondent !</p>
-          <button className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded">
-            Consultation gratuite
+        <section style={{
+          backgroundColor: '#d1fae5',
+          padding: '2rem',
+          borderRadius: '0.5rem',
+          border: '1px solid #a7f3d0'
+        }}>
+          <h2 style={{
+            fontSize: '1.25rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '0.5rem'
+          }}>
+            Project idea?
+          </h2>
+          <p style={{ color: '#374151', marginBottom: '1.5rem' }}>
+          Our experts answer you!          </p>
+          <button style={{
+            backgroundColor: '#10b981',
+            color: 'white',
+            fontWeight: '500',
+            padding: '0.5rem 1.5rem',
+            borderRadius: '0.375rem',
+            border: 'none',
+            cursor: 'pointer',
+            transition: 'background-color 0.2s'
+          }}>
+            Free consultation
           </button>
         </section>
-      </div>
-
-      {/* Sidebar */}
-      <aside className="w-80 bg-white p-6 border-l border-gray-200">
-        {/* Hydroponie Menu */}
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">Hydroponie</h3>
-          <ul className="space-y-2">
-            {hydroponieMenu.map((item, index) => (
-              <li key={index}>
-                <a 
-                  href={item.url} 
-                  className="block py-2 text-gray-700 hover:text-green-600 transition-colors border-b border-gray-100"
-                >
-                  {item.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Contact Card */}
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <div className="text-4xl text-green-600 mb-4">💡</div>
-          <h3 className="text-xl font-semibold mb-2">Idée de projet ?</h3>
-          <p className="text-gray-600 mb-4">Nos experts vous répondent !</p>
-          
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center">
-              <PhoneIcon className="h-5 w-5 text-green-600 mr-2" />
-              <span className="text-gray-700">(+216) 50 970 310</span>
-            </div>
-            <div className="flex items-center">
-              <EnvelopeIcon className="h-5 w-5 text-green-600 mr-2" />
-              <span className="text-gray-700">info@growit-yourself.com</span>
-            </div>
-          </div>
-          
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition-colors">
-            Contactez-nous
-          </button>
-        </div>
-      </aside>
+      </main>
     </div>
   );
 };

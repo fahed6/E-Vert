@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .swal2-title {
   font-family: 'Your-Font-Name', sans-serif !important;
 }
