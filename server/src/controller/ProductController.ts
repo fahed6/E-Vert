@@ -1,9 +1,9 @@
 import { Request, Response, Router } from "express";
 import multer from "multer";
-import { ProductService } from "../services/ProductService";
-import { Product } from "../entities/Product";
 import AppDataSource from "../data-source";
 import { Category } from "../entities/Category";
+import { Product } from "../entities/Product";
+import { ProductService } from "../services/ProductService";
 
 // Multer configuration
 const storage = multer.diskStorage({
@@ -36,6 +36,24 @@ export class ProductController {
     this.router.put("/:id", upload.single("image"), this.updateProduct.bind(this));
     this.router.delete("/:id", this.deleteProduct.bind(this));
     this.router.get("/count/total", this.countProducts.bind(this));
+    this.router.get("/analytics/distribution", this.getProductDistribution.bind(this));
+  }
+
+  async getProductDistribution(req: Request, res: Response): Promise<void> {
+    try {
+      const distributionData = await this.productService.getProductDistribution();
+      
+      res.status(200).json({
+        success: true,
+        data: distributionData
+      });
+    } catch (error) {
+      console.error("Get product distribution error:", error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to get product distribution"
+      });
+    }
   }
 
   public async countProducts(req: Request, res: Response) {

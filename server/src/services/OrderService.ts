@@ -21,6 +21,32 @@ export class OrderService {
   private userRepository = AppDataSource.getRepository(User);
   private addressRepository = AppDataSource.getRepository(Address);
 
+
+  async getSalesTrend(months: number = 6): Promise<{name: string, sales: number}[]> {
+    // Calculate start date (X months ago)
+    const startDate = new Date();
+    startDate.setMonth(startDate.getMonth() - months);
+    
+    // Query to get monthly sales data
+    const result = await this.orderRepository.query(
+      `SELECT 
+        TO_CHAR(date_trunc('month', "createdAt"), 'Mon') as month,
+        EXTRACT(MONTH FROM "createdAt") as month_num,
+        SUM(CAST("cartSnapshot"::json->>'total' AS numeric)) as sales
+      FROM "order"
+      WHERE "createdAt" >= $1 AND "orderState" != $2
+      GROUP BY month, month_num
+      ORDER BY month_num`,
+      [startDate, OrderState.HOLD]
+    );
+  
+    // Format the result for the chart
+    return result.map((row: any) => ({
+      name: row.month,
+      sales: parseFloat(row.sales) || 0
+    }));
+  }
+
   async getLastMonthRevenue(): Promise<number> {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - 30);

@@ -1,0 +1,207 @@
+import { Box as Boxi, Pagination } from '@mui/material';
+import { Badge, Box, Button, Card, Flex, Grid, Heading, Text } from '@radix-ui/themes';
+import React, { useEffect, useState } from 'react';
+import { BounceLoader } from 'react-spinners';
+
+import Swal from 'sweetalert2';
+import useUserData from '../../hooks/useUserData';
+import { ProductService } from '../../services/ProductService';
+import { Product } from '../../types/Product';
+import AddProductDialog from './partner/partnerComponents/AddProductDialog';
+import UpdateProductDialog from './partner/partnerComponents/UpdateProductDialog';
+
+const AdminProductsContent: React.FC = () => {
+  const user = useUserData();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  
+  const itemsPerPage = 6;
+  const productService = new ProductService();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await productService.getAllProducts(
+          currentPage,
+          itemsPerPage
+        );
+
+        setProducts(response.data);
+        setTotalCount(response.pagination.total);
+        setTotalPages(response.pagination.totalPages);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load products');
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [currentPage]);
+
+  const handleDeleteProduct = async (id: number) => {
+    try {
+      setIsDeleting(id);
+      const result = await Swal.fire({
+        title: 'Are you sure?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      });
+  
+      if (result.isConfirmed) {
+        await productService.deleteProduct(id);
+        setProducts(products.filter(product => product.id !== id));
+        setTotalCount(prev => prev - 1);
+        
+        Swal.fire(
+          {
+            title: "Deleted!",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 1500, 
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      Swal.fire({
+        title: "Failed to delete product.",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500, 
+      });
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
+  const getStockStatus = (stock: number) => {
+    if (stock > 10) return { label: 'In Stock', color: 'green' };
+    if (stock > 0) return { label: 'Low Stock', color: 'amber' };
+    return { label: 'Out of Stock', color: 'red' };
+  };
+
+  const formatPrice = (price: number) => {
+    return `$${price}`;
+  };
+
+  // Show loading spinner while waiting for data
+  if (loading) {
+    return (
+      <Boxi sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}>
+        <BounceLoader color="#4CAF50" size={35}/>
+      </Boxi>
+    );
+  }
+
+  // Show error if we have one
+  if (error) {
+    return (
+      <Box>
+        <Heading size="6" mb="4">Products Management</Heading>
+        <Text color="red">{error}</Text>
+      </Box>
+    );
+  }
+
+  return (
+    <Box>
+      <Flex justify="between" align="center" mb="4">
+        <Heading size="6">Products Management ({totalCount} total)</Heading>
+        
+      </Flex>
+      
+      <Grid columns={{ initial: "1", md: "2", lg: "3" }} gap="4" mb="4">
+        {products.length > 0 ? (
+          products.map((product) => (
+            <Card key={product.id}>
+            <Flex direction="column" gap="2">
+              <Box 
+                height="120px" 
+                position="relative"
+                overflow="hidden"
+                style={{ borderRadius: "var(--radius-2)" }}
+              >
+                {product.image ? (
+                  <img
+                    src={`http://localhost:5000/${product.image}`}
+                    alt={product.name}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      objectPosition: 'center'
+                    }}
+                  />
+                ) : (
+                  <Box 
+                    width="100%" 
+                    height="100%" 
+                    style={{ backgroundColor: "gray" }}
+                  />
+                )}
+              </Box>
+              <Text weight="bold">{product.name}</Text>
+              <Flex justify="between" align="center">
+                <Text>{formatPrice(product.price)}</Text>
+                <Badge>
+                  {getStockStatus(product.stock).label}
+                </Badge>
+              </Flex>
+              <Flex gap="2" mt="2">
+                <UpdateProductDialog 
+                  product={product}
+                  onProductUpdated={(updatedProduct) => {
+                    setProducts(products.map(p => 
+                      p.id === updatedProduct.id ? updatedProduct : p
+                    ));
+                  }}
+                />
+               <Button 
+                    variant="soft" 
+                    size="1" 
+                    color="red"
+                    onClick={() => handleDeleteProduct(product.id)}
+                    disabled={isDeleting === product.id}
+                  >
+                    {isDeleting === product.id ? 'Deleting...' : 'Delete'}
+                  </Button>
+              </Flex>
+            </Flex>
+          </Card>
+          ))
+        ) : (
+          <Text align="center">No products found</Text>
+        )}
+      </Grid>
+
+      {totalPages > 1 && (
+        <Flex justify="center">
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={(_event, page) => setCurrentPage(page)}
+          />
+        </Flex>
+      )}
+    </Box>
+  );
+};
+
+export default AdminProductsContent;

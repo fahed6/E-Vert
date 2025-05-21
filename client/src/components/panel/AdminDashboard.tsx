@@ -9,7 +9,8 @@ import {
     Settings as SettingsIcon,
     Close as CloseIcon,
     ChevronLeft as CollapseIcon,
-    ChevronRight as ExpandIcon
+    ChevronRight as ExpandIcon,
+     Inventory as ProductsIcon,
 } from '@mui/icons-material';
 import {
     Box,
@@ -24,10 +25,12 @@ import DashboardContent from './DashboardContent';
 import CustomersContent from './CustomersContent';
 import PartnersContent from './PartnersContent';
 import OrdersContent from './OrdersContent';
+
 import UserProfile from '../UserProfile';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../config/firebase-config';
 import { useNavigate } from 'react-router-dom';
+import AdminProductsContent from './AdminProductsContent';
 
 // Define types for menu items
 interface MenuItem {
@@ -46,6 +49,7 @@ const AdminDashboard: React.FC = () => {
     { id: 'dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
     { id: 'customers', label: 'Customers', icon: <CustomersIcon /> },
     { id: 'partners', label: 'Partners', icon: <PartnersIcon /> },
+    { id: 'products', label: 'Products', icon: <ProductsIcon /> },
     { id: 'orders', label: 'Orders', icon: <OrdersIcon /> },
     { id: 'settings', label: 'Settings', icon: <SettingsIcon /> },
   ];
@@ -66,6 +70,9 @@ const AdminDashboard: React.FC = () => {
         return <CustomersContent />;
       case 'partners':
         return <PartnersContent />;
+        
+        case 'products':
+        return <AdminProductsContent />;
      
       case 'orders':
         return <OrdersContent />;

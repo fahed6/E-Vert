@@ -14,6 +14,11 @@ export interface PaginatedResponse<T> {
 }
 
 export class ProductService {
+
+  async getDistribution(){
+    return apiCall(`${BASE_URL_PRODUCT}/analytics/distribution`, 'GET')
+  }
+
   // Create a new product with file upload
   async createProduct(productData: FormData): Promise<Product> {
     return apiCall(`${BASE_URL_PRODUCT}`, 'POST', productData, {

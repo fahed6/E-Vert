@@ -31,6 +31,10 @@ interface PaginatedResponse<T> {
 }
 
 export class OrderService {
+  async getSalesTrend(){
+    return apiCall(`${BASE_URL}/analytics/sales-trend`, 'GET')
+  }
+
   async getAllOrders(params?: PaginationParams): Promise<PaginatedResponse<any>> {
     const queryParams = new URLSearchParams();
     

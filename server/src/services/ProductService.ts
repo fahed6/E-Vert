@@ -8,6 +8,24 @@ export class ProductService {
   private partnerRepository = AppDataSource.getRepository(Partner);
   private categoryRepository = AppDataSource.getRepository(Category);
 
+  async getProductDistribution(): Promise<{name: string, value: number}[]> {
+    // Get product count by category
+    const result = await this.productRepository
+      .createQueryBuilder('product')
+      .select('category.name', 'name')
+      .addSelect('COUNT(product.id)', 'value')
+      .innerJoin('product.categories', 'category')
+      .groupBy('category.name')
+      .orderBy('value', 'DESC')
+      .getRawMany();
+  
+    // Format the result for the chart
+    return result.map(row => ({
+      name: row.name,
+      value: parseInt(row.value) || 0
+    }));
+  }
+
   async countProducts(): Promise<number> {
   
       const count = await this.productRepository.count();

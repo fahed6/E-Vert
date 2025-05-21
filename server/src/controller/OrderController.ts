@@ -18,10 +18,42 @@ export class OrderController {
     this.router.get("/:userId/orders", this.getUserOrders.bind(this));
     this.router.get("/:id", this.getOrderById.bind(this));
     this.router.put("/:id/state", this.updateOrderState.bind(this));
-    this.router.get("/count/total", this.getTotalOrderCount.bind(this)); // New route
+    this.router.get("/count/total", this.getTotalOrderCount.bind(this));
     this.router.get("/revenue/last-month", this.getLastMonthRevenue.bind(this));
     this.router.get("/:userId/last-order", this.getLastOrderForUser.bind(this));
+    this.router.get("/analytics/sales-trend", this.getSalesTrend.bind(this));
   }
+
+  async getSalesTrend(req: Request, res: Response): Promise<void> {
+    try {
+      // Get optional months parameter from query (default to 6 months)
+      const months = req.query.months 
+        ? parseInt(req.query.months as string) 
+        : 6;
+  
+      if (isNaN(months) || months <= 0) {
+        res.status(400).json({ 
+          success: false,
+          message: "Invalid months parameter - must be a positive number"
+        });
+        return;
+      }
+  
+      const salesData = await this.orderService.getSalesTrend(months);
+      
+      res.status(200).json({
+        success: true,
+        data: salesData
+      });
+    } catch (error) {
+      console.error("Get sales trend error:", error);
+      res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : "Failed to get sales trend"
+      });
+    }
+  }
+
 async getLastOrderForUser(req: Request, res: Response): Promise<void> {
   try {
     const userId = parseInt(req.params.userId);
